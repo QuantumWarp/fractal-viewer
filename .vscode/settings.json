@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        ".editorconfig": true,
+        ".gitignore": true,
+        ".vscode": true,
+        "e2e": true,
+        "node_modules": true,
+        "tsconfig.json": true,
+        "tslint.json": true
+    }
+}
