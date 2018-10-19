@@ -1,8 +1,5 @@
 :host {
   flex: 1;
   display: flex;
-}
-
-:host > canvas {
-  flex: 1;
+  flex-direction: row;
 }

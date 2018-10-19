@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, HostBinding } from '@angular/core';
 
 import { ComputedPoint } from '../models/computed-point';
 import { Coordinate } from '../models/coordinate';
@@ -19,8 +19,8 @@ export class FractalCanvasComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.context = (<HTMLCanvasElement>this.myCanvas.nativeElement).getContext('2d');
 
-    this.context.canvas.width  = window.innerWidth;
-    this.context.canvas.height = window.innerHeight;
+    this.myCanvas.nativeElement.width  = this.context.canvas.offsetWidth;
+    this.myCanvas.nativeElement.height = this.context.canvas.offsetHeight;
 
     this.fractalProcessor = new FractalProcessor(
       new Coordinate(0, 0),
