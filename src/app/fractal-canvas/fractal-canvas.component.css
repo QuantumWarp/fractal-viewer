@@ -2,3 +2,7 @@
   flex: 1;
   display: flex;
 }
+
+canvas {
+  flex: 1;
+}
