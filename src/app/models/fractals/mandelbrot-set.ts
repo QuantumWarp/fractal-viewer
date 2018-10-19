@@ -27,14 +27,17 @@ export class MandelbrotSet implements Fractal {
 
   private checkIsBounded(coord: Coordinate): boolean {
     // Find the absolute value
-    const value = Math.sqrt((coord.x * coord.x) + (coord.y * coord.y));
-    return value < this.bound;
+    const value = (coord.x * coord.x) + (coord.y * coord.y);
+    return value < (this.bound * this.bound);
   }
 
   private iterate(coord: Coordinate, initialCoord: Coordinate): Coordinate {
+    const x = coord.x;
+    const y = coord.y;
+
     // Square the current term
-    coord.x = (coord.x * coord.x) - (coord.y * coord.y);
-    coord.y = 2 * coord.x * coord.y;
+    coord.x = (x * x) - (y * y);
+    coord.y = 2 * x * y;
 
     // Add the initial value
     coord.x = coord.x + initialCoord.x;
