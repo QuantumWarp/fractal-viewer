@@ -47,6 +47,14 @@
             }
           }
         },
+        "build-worker": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "src/assets/workers",
+            "main": "worker/main.worker.ts",
+            "tsConfig": "worker/tsconfig.worker.json"
+          }
+        },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
@@ -56,6 +64,14 @@
             "production": {
               "browserTarget": "fractal-viewer:build:production"
             }
+          }
+        },
+        "serve-worker": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "src/assets/workers",
+            "main": "worker/main.worker.ts",
+            "tsConfig": "worker/tsconfig.worker.json"
           }
         },
         "extract-i18n": {
