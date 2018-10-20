@@ -1,18 +1,16 @@
-import { Coordinate } from '../coordinate';
-import { Fractal } from './fractal.interface';
+import { Coordinate } from '../shared/coordinate';
+import { MandelbrotSetParams } from './mandelbrot-set-params';
+import { Fractal } from './shared/fractal.interface';
 
-export class MandelbrotSet implements Fractal {
+export class MandelbrotSet implements Fractal<MandelbrotSetParams> {
 
-  constructor(
-    public maxIterations: number,
-    public bound: number,
-  ) { }
+  constructor(public params: MandelbrotSetParams) { }
 
   calculate(initialCoord: Coordinate): number | undefined {
     let coord = initialCoord.clone();
     let count = 0;
 
-    while (count < this.maxIterations) {
+    while (count < this.params.maxIterations) {
       coord = this.iterate(coord, initialCoord);
 
       if (!this.checkIsBounded(coord)) {
@@ -28,7 +26,7 @@ export class MandelbrotSet implements Fractal {
   private checkIsBounded(coord: Coordinate): boolean {
     // Find the absolute value
     const value = (coord.x * coord.x) + (coord.y * coord.y);
-    return value < (this.bound * this.bound);
+    return value < (this.params.bound * this.params.bound);
   }
 
   private iterate(coord: Coordinate, initialCoord: Coordinate): Coordinate {

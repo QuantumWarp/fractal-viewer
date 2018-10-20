@@ -1,38 +1,28 @@
-import { CPUIntensiveWorker } from './cpu-intensive.worker';
-import { WorkerMessage } from './shared/worker-message.model';
-import { WORKER_TOPIC } from './shared/worker-topic.constants';
+import { FractalProcessor } from './fractal-processers/fractal-processor';
+import { ProcessFractalDone } from './messages/process-fractal-done';
+import { ProcessFractalInfo } from './messages/process-fractal-info';
+import { ProcessFractalResults } from './messages/process-fractal-results';
+import { WorkerMessageType } from './messages/worker-message.enum';
 
 export class AppWorkers {
-  workerCtx: any;
-  created: Date;
+  constructor(public workerCtx: any) { }
 
-  constructor(workerCtx: any) {
-    this.workerCtx = workerCtx;
-    this.created = new Date();
-  }
+  workerBroker($event: any): void {
+    const message = $event.data;
 
-  workerBroker($event: MessageEvent): void {
-    const { topic, data } = $event.data as WorkerMessage;
-    const workerMessage = new WorkerMessage(topic, data);
-
-    switch (topic) {
-      case WORKER_TOPIC.cpuIntensive:
-        this.workerCPUIntensive(workerMessage);
+    switch (message.type) {
+      case WorkerMessageType.ProcessFractalInfo:
+        this.startProcessor(message);
         break;
-      default:  // Add support for more workers here
-        console.error('Topic Does Not Match');
+      default:
+        console.error('Message not recognized');
     }
   }
 
-  workerCPUIntensive(value: WorkerMessage): void {
-    this.returnWorkResults(CPUIntensiveWorker.doWork(value));
-  }
-
-  /**
-   * Posts results back through to the worker
-   * @param {WorkerMessage} message
-   */
-  private returnWorkResults(message: WorkerMessage): void {
-    this.workerCtx.postMessage(message);
+  startProcessor(params: ProcessFractalInfo): void {
+    const processor = new FractalProcessor(params);
+    processor.process((coords) =>
+      this.workerCtx.postMessage(new ProcessFractalResults(coords)));
+    this.workerCtx.postMessage(new ProcessFractalDone());
   }
 }

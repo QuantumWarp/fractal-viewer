@@ -8,7 +8,7 @@ import { FractalCanvasComponent } from './fractal-canvas/fractal-canvas.componen
 import { FractalViewerComponent } from './fractal-viewer/fractal-viewer.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WorkerService } from './worker.service';
+import { WorkerService } from './services/worker.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,9 @@ import { WorkerService } from './worker.service';
     MatButtonModule,
     MatCardModule,
   ],
-  providers: [WorkerService],
+  providers: [
+    WorkerService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -81,34 +81,31 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var cpu_intensive_worker_1 = __webpack_require__(/*! ./cpu-intensive.worker */ "./worker/app-workers/cpu-intensive.worker.ts");
-var worker_message_model_1 = __webpack_require__(/*! ./shared/worker-message.model */ "./worker/app-workers/shared/worker-message.model.ts");
-var worker_topic_constants_1 = __webpack_require__(/*! ./shared/worker-topic.constants */ "./worker/app-workers/shared/worker-topic.constants.ts");
+var fractal_processor_1 = __webpack_require__(/*! ./fractal-processers/fractal-processor */ "./worker/app-workers/fractal-processers/fractal-processor.ts");
+var process_fractal_done_1 = __webpack_require__(/*! ./messages/process-fractal-done */ "./worker/app-workers/messages/process-fractal-done.ts");
+var process_fractal_results_1 = __webpack_require__(/*! ./messages/process-fractal-results */ "./worker/app-workers/messages/process-fractal-results.ts");
+var worker_message_enum_1 = __webpack_require__(/*! ./messages/worker-message.enum */ "./worker/app-workers/messages/worker-message.enum.ts");
 var AppWorkers = /** @class */ (function () {
     function AppWorkers(workerCtx) {
         this.workerCtx = workerCtx;
-        this.created = new Date();
     }
     AppWorkers.prototype.workerBroker = function ($event) {
-        var _a = $event.data, topic = _a.topic, data = _a.data;
-        var workerMessage = new worker_message_model_1.WorkerMessage(topic, data);
-        switch (topic) {
-            case worker_topic_constants_1.WORKER_TOPIC.cpuIntensive:
-                this.workerCPUIntensive(workerMessage);
+        var message = $event.data;
+        switch (message.type) {
+            case worker_message_enum_1.WorkerMessageType.ProcessFractalInfo:
+                this.startProcessor(message);
                 break;
-            default:// Add support for more workers here
-                console.error('Topic Does Not Match');
+            default:
+                console.error('Message not recognized');
         }
     };
-    AppWorkers.prototype.workerCPUIntensive = function (value) {
-        this.returnWorkResults(cpu_intensive_worker_1.CPUIntensiveWorker.doWork(value));
-    };
-    /**
-     * Posts results back through to the worker
-     * @param {WorkerMessage} message
-     */
-    AppWorkers.prototype.returnWorkResults = function (message) {
-        this.workerCtx.postMessage(message);
+    AppWorkers.prototype.startProcessor = function (params) {
+        var _this = this;
+        var processor = new fractal_processor_1.FractalProcessor(params);
+        processor.process(function (coords) {
+            return _this.workerCtx.postMessage(new process_fractal_results_1.ProcessFractalResults(coords));
+        });
+        this.workerCtx.postMessage(new process_fractal_done_1.ProcessFractalDone());
     };
     return AppWorkers;
 }());
@@ -117,68 +114,149 @@ exports.AppWorkers = AppWorkers;
 
 /***/ }),
 
-/***/ "./worker/app-workers/cpu-intensive.worker.ts":
-/*!****************************************************!*\
-  !*** ./worker/app-workers/cpu-intensive.worker.ts ***!
-  \****************************************************/
+/***/ "./worker/app-workers/fractal-processers/fractal-processor.ts":
+/*!********************************************************************!*\
+  !*** ./worker/app-workers/fractal-processers/fractal-processor.ts ***!
+  \********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var worker_message_model_1 = __webpack_require__(/*! ./shared/worker-message.model */ "./worker/app-workers/shared/worker-message.model.ts");
-var CPUIntensiveWorker = /** @class */ (function () {
-    function CPUIntensiveWorker() {
+var fractal_factory_1 = __webpack_require__(/*! ../fractals/shared/fractal-factory */ "./worker/app-workers/fractals/shared/fractal-factory.ts");
+var computed_point_1 = __webpack_require__(/*! ../shared/computed-point */ "./worker/app-workers/shared/computed-point.ts");
+var coordinate_1 = __webpack_require__(/*! ../shared/coordinate */ "./worker/app-workers/shared/coordinate.ts");
+var FractalProcessor = /** @class */ (function () {
+    function FractalProcessor(params) {
+        this.params = params;
+        this.computedCoords = [];
+        this.fractal = fractal_factory_1.FractalFactory.create(params.fractalParams);
+        this.topLeftCoord = new coordinate_1.Coordinate(params.center.x - (params.increment * params.width / 2), params.center.y - (params.increment * params.height / 2));
     }
-    CPUIntensiveWorker.doWork = function (value) {
-        var before = new Date();
-        var count = 0;
-        while (true) {
-            count++;
-            var now = new Date();
-            if (now.valueOf() - before.valueOf() > value.data.duration) {
-                break;
+    FractalProcessor.prototype.process = function (resultCallback) {
+        var x = 0;
+        while (x < this.params.width) {
+            var y = 0;
+            while (y < this.params.height) {
+                var coord = this.translateToCoord(x, y);
+                var iterations = this.fractal.calculate(coord);
+                this.computedCoords.push(new computed_point_1.ComputedPoint(x, y, iterations));
+                y++;
             }
+            resultCallback(this.computedCoords);
+            this.computedCoords = [];
+            x++;
         }
-        return new worker_message_model_1.WorkerMessage(value.topic, { iteration: count });
     };
-    return CPUIntensiveWorker;
+    FractalProcessor.prototype.translateToCoord = function (x, y) {
+        return new coordinate_1.Coordinate(this.topLeftCoord.x + (this.params.increment * x), this.topLeftCoord.y + (this.params.increment * y));
+    };
+    return FractalProcessor;
 }());
-exports.CPUIntensiveWorker = CPUIntensiveWorker;
+exports.FractalProcessor = FractalProcessor;
 
 
 /***/ }),
 
-/***/ "./worker/app-workers/shared/worker-message.model.ts":
-/*!***********************************************************!*\
-  !*** ./worker/app-workers/shared/worker-message.model.ts ***!
-  \***********************************************************/
+/***/ "./worker/app-workers/fractals/mandelbrot-set.ts":
+/*!*******************************************************!*\
+  !*** ./worker/app-workers/fractals/mandelbrot-set.ts ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var WorkerMessage = /** @class */ (function () {
-    function WorkerMessage(topic, data) {
-        this.topic = topic;
-        this.data = data;
+var MandelbrotSet = /** @class */ (function () {
+    function MandelbrotSet(params) {
+        this.params = params;
     }
-    WorkerMessage.getInstance = function (value) {
-        var topic = value.topic, data = value.data;
-        return new WorkerMessage(topic, data);
+    MandelbrotSet.prototype.calculate = function (initialCoord) {
+        var coord = initialCoord.clone();
+        var count = 0;
+        while (count < this.params.maxIterations) {
+            coord = this.iterate(coord, initialCoord);
+            if (!this.checkIsBounded(coord)) {
+                return count;
+            }
+            count++;
+        }
+        return undefined;
     };
-    return WorkerMessage;
+    MandelbrotSet.prototype.checkIsBounded = function (coord) {
+        // Find the absolute value
+        var value = (coord.x * coord.x) + (coord.y * coord.y);
+        return value < (this.params.bound * this.params.bound);
+    };
+    MandelbrotSet.prototype.iterate = function (coord, initialCoord) {
+        var x = coord.x;
+        var y = coord.y;
+        // Square the current term
+        coord.x = (x * x) - (y * y);
+        coord.y = 2 * x * y;
+        // Add the initial value
+        coord.x = coord.x + initialCoord.x;
+        coord.y = coord.y + initialCoord.y;
+        return coord;
+    };
+    return MandelbrotSet;
 }());
-exports.WorkerMessage = WorkerMessage;
+exports.MandelbrotSet = MandelbrotSet;
 
 
 /***/ }),
 
-/***/ "./worker/app-workers/shared/worker-topic.constants.ts":
+/***/ "./worker/app-workers/fractals/shared/fractal-factory.ts":
+/*!***************************************************************!*\
+  !*** ./worker/app-workers/fractals/shared/fractal-factory.ts ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var mandelbrot_set_1 = __webpack_require__(/*! ../mandelbrot-set */ "./worker/app-workers/fractals/mandelbrot-set.ts");
+var fractal_type_enum_1 = __webpack_require__(/*! ./fractal-type.enum */ "./worker/app-workers/fractals/shared/fractal-type.enum.ts");
+var FractalFactory = /** @class */ (function () {
+    function FractalFactory() {
+    }
+    FractalFactory.create = function (params) {
+        switch (params.type) {
+            case fractal_type_enum_1.FractalType.MandelbrotSet:
+                return new mandelbrot_set_1.MandelbrotSet(params);
+        }
+    };
+    return FractalFactory;
+}());
+exports.FractalFactory = FractalFactory;
+
+
+/***/ }),
+
+/***/ "./worker/app-workers/fractals/shared/fractal-type.enum.ts":
+/*!*****************************************************************!*\
+  !*** ./worker/app-workers/fractals/shared/fractal-type.enum.ts ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var FractalType;
+(function (FractalType) {
+    FractalType[FractalType["MandelbrotSet"] = 0] = "MandelbrotSet";
+})(FractalType = exports.FractalType || (exports.FractalType = {}));
+
+
+/***/ }),
+
+/***/ "./worker/app-workers/messages/process-fractal-done.ts":
 /*!*************************************************************!*\
-  !*** ./worker/app-workers/shared/worker-topic.constants.ts ***!
+  !*** ./worker/app-workers/messages/process-fractal-done.ts ***!
   \*************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -186,10 +264,105 @@ exports.WorkerMessage = WorkerMessage;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WORKER_TOPIC = {
-    cpuIntensive: 'cupIntensive',
-    imageProcessor: 'imageProcessor'
-};
+var worker_message_enum_1 = __webpack_require__(/*! ./worker-message.enum */ "./worker/app-workers/messages/worker-message.enum.ts");
+var ProcessFractalDone = /** @class */ (function () {
+    function ProcessFractalDone() {
+        this.type = worker_message_enum_1.WorkerMessageType.ProcessFractalDone;
+    }
+    return ProcessFractalDone;
+}());
+exports.ProcessFractalDone = ProcessFractalDone;
+
+
+/***/ }),
+
+/***/ "./worker/app-workers/messages/process-fractal-results.ts":
+/*!****************************************************************!*\
+  !*** ./worker/app-workers/messages/process-fractal-results.ts ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var worker_message_enum_1 = __webpack_require__(/*! ./worker-message.enum */ "./worker/app-workers/messages/worker-message.enum.ts");
+var ProcessFractalResults = /** @class */ (function () {
+    function ProcessFractalResults(computedPoints) {
+        this.computedPoints = computedPoints;
+        this.type = worker_message_enum_1.WorkerMessageType.ProcessFractalResults;
+    }
+    return ProcessFractalResults;
+}());
+exports.ProcessFractalResults = ProcessFractalResults;
+
+
+/***/ }),
+
+/***/ "./worker/app-workers/messages/worker-message.enum.ts":
+/*!************************************************************!*\
+  !*** ./worker/app-workers/messages/worker-message.enum.ts ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var WorkerMessageType;
+(function (WorkerMessageType) {
+    WorkerMessageType[WorkerMessageType["ProcessFractalInfo"] = 0] = "ProcessFractalInfo";
+    WorkerMessageType[WorkerMessageType["ProcessFractalResults"] = 1] = "ProcessFractalResults";
+    WorkerMessageType[WorkerMessageType["ProcessFractalDone"] = 2] = "ProcessFractalDone";
+})(WorkerMessageType = exports.WorkerMessageType || (exports.WorkerMessageType = {}));
+
+
+/***/ }),
+
+/***/ "./worker/app-workers/shared/computed-point.ts":
+/*!*****************************************************!*\
+  !*** ./worker/app-workers/shared/computed-point.ts ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ComputedPoint = /** @class */ (function () {
+    function ComputedPoint(x, y, value) {
+        this.x = x;
+        this.y = y;
+        this.value = value;
+    }
+    return ComputedPoint;
+}());
+exports.ComputedPoint = ComputedPoint;
+
+
+/***/ }),
+
+/***/ "./worker/app-workers/shared/coordinate.ts":
+/*!*************************************************!*\
+  !*** ./worker/app-workers/shared/coordinate.ts ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Coordinate = /** @class */ (function () {
+    function Coordinate(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    Coordinate.prototype.clone = function () {
+        return new Coordinate(this.x, this.y);
+    };
+    return Coordinate;
+}());
+exports.Coordinate = Coordinate;
 
 
 /***/ }),
