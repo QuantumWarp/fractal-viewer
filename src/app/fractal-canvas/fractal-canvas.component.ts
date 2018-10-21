@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { filter } from 'rxjs/operators';
 import { ProcessFractalInfo } from 'worker/app-workers/messages/process-fractal-info';
 import { ProcessFractalResults } from 'worker/app-workers/messages/process-fractal-results';
@@ -7,6 +7,7 @@ import { WorkerMessageType } from 'worker/app-workers/messages/worker-message.en
 import { MandelbrotSetParams } from '../../../worker/app-workers/fractals/mandelbrot-set-params';
 import { ComputedPoint } from '../../../worker/app-workers/shared/computed-point';
 import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
+import { GreenScale } from '../color-schemes/greenscale';
 import { WorkerService } from '../services/worker.service';
 
 @Component({
@@ -17,7 +18,9 @@ import { WorkerService } from '../services/worker.service';
 export class FractalCanvasComponent implements AfterViewInit {
   @ViewChild('myCanvas') myCanvas: ElementRef;
 
+  private colorScheme = new GreenScale();
   private context: CanvasRenderingContext2D;
+  private imageData: ImageData;
 
   constructor(
     public cdr: ChangeDetectorRef,
@@ -29,27 +32,42 @@ export class FractalCanvasComponent implements AfterViewInit {
     this.myCanvas.nativeElement.width  = this.context.canvas.offsetWidth;
     this.myCanvas.nativeElement.height = this.context.canvas.offsetHeight;
 
+    this.imageData = this.context.getImageData(0, 0, this.myCanvas.nativeElement.width, this.myCanvas.nativeElement.height);
+
     this.workerService.doWork(new ProcessFractalInfo(
       new Coordinate(0, 0),
       this.context.canvas.width,
       this.context.canvas.height,
       0.005,
-      new MandelbrotSetParams(50, 2)
+      new MandelbrotSetParams(100, 2)
     ));
 
-    this.workerService.workerUpdate$.subscribe(x => console.log(x));
     this.workerService.workerUpdate$.pipe(
       filter(x => x.type === WorkerMessageType.ProcessFractalResults)
-    ).subscribe(message => this.drawPixels((message as ProcessFractalResults).computedPoints));
+    ).subscribe(message => this.setPixelsOnImageData((message as ProcessFractalResults).computedPoints));
+
+    requestAnimationFrame(() => this.paint());
   }
 
+  private paint(): void {
+    this.context.putImageData(this.imageData, 0, 0);
+    requestAnimationFrame(() => this.paint());
+  }
 
-  private drawPixels(computedPoints: ComputedPoint[]) {
+  private setPixelsOnImageData(computedPoints: ComputedPoint[]) {
     computedPoints.forEach(point => {
-      if (point.value === undefined) { return; }
+      const colorIndices = this.getColorIndicesForCoord(point.x, point.y, this.context.canvas.offsetWidth);
+      const [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
 
-      this.context.fillStyle = 'rgb(0,0,0)'; // sets the color to fill in the rectangle with
-      this.context.drawImage.fillRect(point.x, point.y, 1, 1);
+      this.imageData.data[redIndex] = this.colorScheme.getRed(point.value, 100);
+      this.imageData.data[greenIndex] = this.colorScheme.getGreen(point.value, 100);
+      this.imageData.data[blueIndex] = this.colorScheme.getBlue(point.value, 100);
+      this.imageData.data[alphaIndex] = this.colorScheme.getAlpha(point.value, 100);
     });
+  }
+
+  private getColorIndicesForCoord(x, y, width): number[] {
+    const red = y * (width * 4) + x * 4;
+    return [red, red + 1, red + 2, red + 3];
   }
 }
