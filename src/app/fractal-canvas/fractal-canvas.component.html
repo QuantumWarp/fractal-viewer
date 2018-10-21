@@ -1,1 +1,4 @@
-<canvas #myCanvas></canvas>
+<canvas #myCanvas
+  (click)="pointClicked($event)"
+  (mousemove)="hoverLocation($event)">
+</canvas>

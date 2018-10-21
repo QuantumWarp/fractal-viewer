@@ -2,33 +2,29 @@ import { FractalFactory } from '../fractals/shared/fractal-factory';
 import { Fractal } from '../fractals/shared/fractal.interface';
 import { ProcessFractalInfo } from '../messages/process-fractal-info';
 import { ComputedPoint } from '../shared/computed-point';
-import { Coordinate } from '../shared/coordinate';
+import { Point } from '../shared/point';
 
 export class FractalProcessor {
   public computedCoords: ComputedPoint[] = [];
 
   private fractal: Fractal<any>;
-  private topLeftCoord: Coordinate;
 
   constructor(
     public params: ProcessFractalInfo) {
     this.fractal = FractalFactory.create(params.fractalParams);
-    this.topLeftCoord = new Coordinate(
-      params.center.x - (params.increment * params.width / 2),
-      params.center.y - (params.increment * params.height / 2)
-    );
   }
 
   process(resultCallback: (points: ComputedPoint[]) => void): void {
     let x = 0;
 
-    while (x < this.params.width) {
+    while (x < this.params.dimensions.x) {
       let y = 0;
 
-      while (y < this.params.height) {
-        const coord = this.translateToCoord(x, y);
+      while (y < this.params.dimensions.y) {
+        const point = new Point(x, y);
+        const coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
         const iterations = this.fractal.calculate(coord);
-        this.computedCoords.push(new ComputedPoint(x, y, iterations));
+        this.computedCoords.push(new ComputedPoint(point, iterations));
         y++;
       }
 
@@ -37,12 +33,5 @@ export class FractalProcessor {
 
       x++;
     }
-  }
-
-  private translateToCoord(x: number, y: number): Coordinate {
-    return new Coordinate(
-      this.topLeftCoord.x + (this.params.increment * x),
-      this.topLeftCoord.y + (this.params.increment * y),
-    );
   }
 }

@@ -1,8 +1,9 @@
+import { Point } from './point';
+
 export class ComputedPoint {
 
   constructor(
-    public x: number,
-    public y: number,
+    public point: Point,
     public value: number,
   ) { }
 }

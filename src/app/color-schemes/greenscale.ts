@@ -1,6 +1,6 @@
 import { ColorScheme } from './color-scheme.interface';
 
-export class GreenScale implements ColorScheme {
+export class Greenscale implements ColorScheme {
 
   getRed(value: number | undefined, maxIterations: number): number {
     return 0;

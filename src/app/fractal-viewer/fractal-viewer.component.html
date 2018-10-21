@@ -1,5 +1,19 @@
-<mat-card>
-  <button mat-raised-button>Refresh</button>
-</mat-card>
+<mat-toolbar class="mat-elevation-z4">
+  Fractal Viewer
+</mat-toolbar>
 
-<app-fractal-canvas></app-fractal-canvas>
+<div>
+  <mat-card>
+    <button mat-raised-button>Refresh</button>
+  </mat-card>
+
+  <div>
+    <mat-card class="fractal-controls">
+      <button mat-raised-button>Apply</button>
+    </mat-card>
+
+    <mat-card class="fractal-display">
+      <app-fractal-canvas></app-fractal-canvas>
+    </mat-card>
+  </div>
+</div>

@@ -126,31 +126,28 @@ exports.AppWorkers = AppWorkers;
 Object.defineProperty(exports, "__esModule", { value: true });
 var fractal_factory_1 = __webpack_require__(/*! ../fractals/shared/fractal-factory */ "./worker/app-workers/fractals/shared/fractal-factory.ts");
 var computed_point_1 = __webpack_require__(/*! ../shared/computed-point */ "./worker/app-workers/shared/computed-point.ts");
-var coordinate_1 = __webpack_require__(/*! ../shared/coordinate */ "./worker/app-workers/shared/coordinate.ts");
+var point_1 = __webpack_require__(/*! ../shared/point */ "./worker/app-workers/shared/point.ts");
 var FractalProcessor = /** @class */ (function () {
     function FractalProcessor(params) {
         this.params = params;
         this.computedCoords = [];
         this.fractal = fractal_factory_1.FractalFactory.create(params.fractalParams);
-        this.topLeftCoord = new coordinate_1.Coordinate(params.center.x - (params.increment * params.width / 2), params.center.y - (params.increment * params.height / 2));
     }
     FractalProcessor.prototype.process = function (resultCallback) {
         var x = 0;
-        while (x < this.params.width) {
+        while (x < this.params.dimensions.x) {
             var y = 0;
-            while (y < this.params.height) {
-                var coord = this.translateToCoord(x, y);
+            while (y < this.params.dimensions.y) {
+                var point = new point_1.Point(x, y);
+                var coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
                 var iterations = this.fractal.calculate(coord);
-                this.computedCoords.push(new computed_point_1.ComputedPoint(x, y, iterations));
+                this.computedCoords.push(new computed_point_1.ComputedPoint(point, iterations));
                 y++;
             }
             resultCallback(this.computedCoords);
             this.computedCoords = [];
             x++;
         }
-    };
-    FractalProcessor.prototype.translateToCoord = function (x, y) {
-        return new coordinate_1.Coordinate(this.topLeftCoord.x + (this.params.increment * x), this.topLeftCoord.y + (this.params.increment * y));
     };
     return FractalProcessor;
 }());
@@ -330,9 +327,8 @@ var WorkerMessageType;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ComputedPoint = /** @class */ (function () {
-    function ComputedPoint(x, y, value) {
-        this.x = x;
-        this.y = y;
+    function ComputedPoint(point, value) {
+        this.point = point;
         this.value = value;
     }
     return ComputedPoint;
@@ -352,17 +348,48 @@ exports.ComputedPoint = ComputedPoint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+// This is used for coordinates (decimal numbers)
 var Coordinate = /** @class */ (function () {
     function Coordinate(x, y) {
         this.x = x;
         this.y = y;
     }
+    Coordinate.prototype.computeTopLeftCoordinate = function (dimensions, increment) {
+        return new Coordinate(this.x - (increment * dimensions.x / 2), this.y - (increment * dimensions.y / 2));
+    };
     Coordinate.prototype.clone = function () {
         return new Coordinate(this.x, this.y);
     };
     return Coordinate;
 }());
 exports.Coordinate = Coordinate;
+
+
+/***/ }),
+
+/***/ "./worker/app-workers/shared/point.ts":
+/*!********************************************!*\
+  !*** ./worker/app-workers/shared/point.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var coordinate_1 = __webpack_require__(/*! ./coordinate */ "./worker/app-workers/shared/coordinate.ts");
+// This is used for x, y points (whole numbers)
+var Point = /** @class */ (function () {
+    function Point(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    Point.prototype.toCoordinate = function (topLeftCoord, increment) {
+        return new coordinate_1.Coordinate(topLeftCoord.x + (increment * this.x), topLeftCoord.y + (increment * this.y));
+    };
+    return Point;
+}());
+exports.Point = Point;
 
 
 /***/ }),
