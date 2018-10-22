@@ -7,6 +7,8 @@ import { FractalType } from '../../../worker/app-workers/fractals/shared/fractal
 import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
 import { FractalSettingsService } from '../services/fractal-settings.service';
+import { FractalFactory } from 'worker/app-workers/fractals/shared/fractal-factory';
+import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
 
 @Component({
   selector: 'app-fractal-settings',
@@ -62,10 +64,11 @@ export class FractalSettingsComponent implements OnInit {
       this.form.value.centerX,
       this.form.value.centerY
     );
-    this.fractalSettingsService.fractalParams = new MandelbrotSetParams(
-      this.form.value.maxIterations,
-      this.form.value.bound
-    );
+    this.fractalSettingsService.fractalParams = <FractalParams> {
+      type: this.form.value.fractalType,
+      maxIterations: this.form.value.maxIterations,
+      bound: this.form.value.bound
+    };
     this.fractalSettingsService.updated.emit();
   }
 

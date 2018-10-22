@@ -156,6 +156,55 @@ exports.FractalProcessor = FractalProcessor;
 
 /***/ }),
 
+/***/ "./worker/app-workers/fractals/burning-ship.ts":
+/*!*****************************************************!*\
+  !*** ./worker/app-workers/fractals/burning-ship.ts ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var BurningShip = /** @class */ (function () {
+    function BurningShip(params) {
+        this.params = params;
+    }
+    BurningShip.prototype.calculate = function (initialCoord) {
+        var coord = initialCoord.clone();
+        var count = 0;
+        while (count < this.params.maxIterations) {
+            coord = this.iterate(coord, initialCoord);
+            if (!this.checkIsBounded(coord)) {
+                return count;
+            }
+            count++;
+        }
+        return undefined;
+    };
+    BurningShip.prototype.checkIsBounded = function (coord) {
+        // Find the absolute value
+        var value = (coord.x * coord.x) + (coord.y * coord.y);
+        return value < (this.params.bound * this.params.bound);
+    };
+    BurningShip.prototype.iterate = function (coord, initialCoord) {
+        var x = Math.abs(coord.x);
+        var y = Math.abs(coord.y);
+        // Square the current term
+        coord.x = (x * x) - (y * y);
+        coord.y = 2 * x * y;
+        // Add the initial value
+        coord.x = coord.x + initialCoord.x;
+        coord.y = coord.y + initialCoord.y;
+        return coord;
+    };
+    return BurningShip;
+}());
+exports.BurningShip = BurningShip;
+
+
+/***/ }),
+
 /***/ "./worker/app-workers/fractals/mandelbrot-set.ts":
 /*!*******************************************************!*\
   !*** ./worker/app-workers/fractals/mandelbrot-set.ts ***!
@@ -215,15 +264,19 @@ exports.MandelbrotSet = MandelbrotSet;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var burning_ship_1 = __webpack_require__(/*! ../burning-ship */ "./worker/app-workers/fractals/burning-ship.ts");
 var mandelbrot_set_1 = __webpack_require__(/*! ../mandelbrot-set */ "./worker/app-workers/fractals/mandelbrot-set.ts");
 var fractal_type_enum_1 = __webpack_require__(/*! ./fractal-type.enum */ "./worker/app-workers/fractals/shared/fractal-type.enum.ts");
 var FractalFactory = /** @class */ (function () {
     function FractalFactory() {
     }
     FractalFactory.create = function (params) {
+        console.log(params);
         switch (params.type) {
             case fractal_type_enum_1.FractalType.MandelbrotSet:
                 return new mandelbrot_set_1.MandelbrotSet(params);
+            case fractal_type_enum_1.FractalType.BurningShip:
+                return new burning_ship_1.BurningShip(params);
         }
     };
     return FractalFactory;
@@ -246,6 +299,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var FractalType;
 (function (FractalType) {
     FractalType[FractalType["MandelbrotSet"] = 0] = "MandelbrotSet";
+    FractalType[FractalType["BurningShip"] = 1] = "BurningShip";
 })(FractalType = exports.FractalType || (exports.FractalType = {}));
 
 

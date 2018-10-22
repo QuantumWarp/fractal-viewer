@@ -9,7 +9,7 @@ import { ComputedPoint } from '../../../worker/app-workers/shared/computed-point
 import { WorkerService } from '../services/worker.service';
 import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
 import { Point } from 'worker/app-workers/shared/point';
-import { Greenscale } from '../color-schemes/greenscale';
+import { Greenscale } from '../color-schemes/schemes/greenscale';
 import { FractalSettingsService } from '../services/fractal-settings.service';
 
 @Component({

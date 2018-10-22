@@ -1,3 +1,7 @@
 export enum ColorSchemeType {
-  Greenscale
+  Greyscale,
+  Greenscale,
+  Bluescale,
+  Redscale,
+  Sine,
 }
