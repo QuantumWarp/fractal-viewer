@@ -3,5 +3,7 @@ export enum ColorSchemeType {
   Greenscale,
   Bluescale,
   Redscale,
-  Sine,
+  BlueRedFlame,
+  AlternatingMonochrome,
+  AlternatingPrimaryColor,
 }

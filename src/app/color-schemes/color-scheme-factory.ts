@@ -1,10 +1,12 @@
 import { ColorSchemeType } from './color-scheme-type.enum';
 import { ColorScheme } from './color-scheme.interface';
+import { AlternatingMonochrome } from './schemes/alternating-monochrome';
+import { AlternatingPrimaryColor } from './schemes/alternating-primary-color';
+import { BlueRedFlame } from './schemes/blue-red-flame';
+import { Bluescale } from './schemes/bluescale';
 import { Greenscale } from './schemes/greenscale';
 import { Greyscale } from './schemes/greyscale';
-import { Bluescale } from './schemes/bluescale';
 import { Redscale } from './schemes/redscale';
-import { Sine } from './schemes/sine';
 
 export class ColorSchemeFactory {
 
@@ -19,8 +21,12 @@ export class ColorSchemeFactory {
         return new Bluescale();
       case ColorSchemeType.Redscale:
         return new Redscale();
-      case ColorSchemeType.Sine:
-        return new Sine();
+      case ColorSchemeType.BlueRedFlame:
+        return new BlueRedFlame();
+      case ColorSchemeType.AlternatingMonochrome:
+        return new AlternatingMonochrome();
+      case ColorSchemeType.AlternatingPrimaryColor:
+        return new AlternatingPrimaryColor();
     }
   }
 }

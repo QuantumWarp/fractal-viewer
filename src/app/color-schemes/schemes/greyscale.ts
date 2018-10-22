@@ -6,17 +6,17 @@ export class Greyscale implements ColorScheme {
   type = ColorSchemeType.Greyscale;
 
   getRed(value: number | undefined, maxIterations: number): number {
-    if (!value) { return 0; }
+    if (value === undefined) { return 0; }
     return 255 * value / maxIterations;
   }
 
   getGreen(value: number | undefined, maxIterations: number): number {
-    if (!value) { return 0; }
+    if (value === undefined) { return 0; }
     return 255 * value / maxIterations;
   }
 
   getBlue(value: number | undefined, maxIterations: number): number {
-    if (!value) { return 0; }
+    if (value === undefined) { return 0; }
     return 255 * value / maxIterations;
   }
 

@@ -10,7 +10,7 @@ export class Greenscale implements ColorScheme {
   }
 
   getGreen(value: number | undefined, maxIterations: number): number {
-    if (!value) { return 0; }
+    if (value === undefined) { return 0; }
     return 255 * value / maxIterations;
   }
 
