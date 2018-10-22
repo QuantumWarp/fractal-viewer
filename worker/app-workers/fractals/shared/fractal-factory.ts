@@ -6,7 +6,6 @@ import { FractalType } from './fractal-type.enum';
 export class FractalFactory {
 
   static create(params: FractalParams) {
-    console.log(params);
 
     switch (params.type) {
       case FractalType.MandelbrotSet:
