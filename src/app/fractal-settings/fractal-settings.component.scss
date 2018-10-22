@@ -1,0 +1,22 @@
+:host {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+mat-card > form {
+  display: flex;
+  flex-wrap: wrap;
+
+  > * {
+    margin-left: 20px;
+  }
+}

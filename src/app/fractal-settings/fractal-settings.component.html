@@ -1,0 +1,54 @@
+<mat-card class="buttons">
+  <button mat-raised-button (click)="applySettings()">Apply Settings</button>
+  <button mat-raised-button (click)="resetZoom()">Reset Zoom</button>
+  <button mat-raised-button (click)="resetAll()">Reset All</button>
+  <button mat-raised-button>Download</button>
+</mat-card>
+
+<mat-card>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <mat-select placeholder="Fractal Type" formControlName="fractalType">
+        <mat-option *ngFor="let fractalType of fractalTypes | keys" [value]="fractalType.key">{{ fractalType.value }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select placeholder="Color Scheme" formControlName="colorScheme">
+        <mat-option *ngFor="let colorScheme of colorSchemes | keys" [value]="colorScheme.key">{{ colorScheme.value }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Zoom" formControlName="zoom" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Zoom Factor" formControlName="zoomFactor" 
+        matTooltip="This specifies how much clicking will zoom in." />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Center X" formControlName="centerX" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Center Y" formControlName="centerY" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Bound" formControlName="bound"
+        matTooltip="This specifies how much clicking will zoom in." />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Max Iterations" formControlName="maxIterations"
+        matTooltip="This specifies how many iterations are performed to check if the bound value is reached." />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Min Color Value" formControlName="minColorValue" 
+        matTooltip="This can be used when very zoomed in to spread the color over a smaller range of values."/>
+    </mat-form-field>
+  </form>
+</mat-card>

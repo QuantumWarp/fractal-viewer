@@ -10,6 +10,7 @@ import { WorkerService } from '../services/worker.service';
 import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
 import { Point } from 'worker/app-workers/shared/point';
 import { Greenscale } from '../color-schemes/greenscale';
+import { FractalSettingsService } from '../services/fractal-settings.service';
 
 @Component({
   selector: 'app-fractal-canvas',
@@ -20,56 +21,66 @@ export class FractalCanvasComponent implements AfterViewInit {
   @Output() hoverLocationChanged = new EventEmitter<Coordinate>();
   @ViewChild('myCanvas') myCanvas: ElementRef;
 
-  private colorScheme = new Greenscale();
-  private dimensions: Point;
   private topLeftCoord: Coordinate;
-  private increment: number;
+
   private context: CanvasRenderingContext2D;
   private imageData: ImageData;
 
   constructor(
     public cdr: ChangeDetectorRef,
+    public fractalSettingsService: FractalSettingsService,
     public workerService: WorkerService) { }
 
   ngAfterViewInit(): void {
     this.context = (<HTMLCanvasElement>this.myCanvas.nativeElement).getContext('2d');
-    this.dimensions = new Point(this.context.canvas.offsetWidth, this.context.canvas.offsetHeight);
 
-    this.myCanvas.nativeElement.width  = this.dimensions.x;
-    this.myCanvas.nativeElement.height = this.dimensions.y;
+    this.updateDimensions();
 
     this.workerService.workerUpdate$.pipe(
       filter(x => x.type === WorkerMessageType.ProcessFractalResults)
     ).subscribe(message => this.setPixelsOnImageData((message as ProcessFractalResults).computedPoints));
 
+    this.fractalSettingsService.updated.subscribe(() => this.runProcessing());
+
     requestAnimationFrame(() => this.paint());
 
-    this.runProcessing(new Coordinate(0, 0), 0.005);
+    this.runProcessing();
   }
 
-  runProcessing(center: Coordinate, increment: number): void {
-    this.imageData = this.context.createImageData(this.dimensions.x, this.dimensions.y);
-    this.topLeftCoord = center.computeTopLeftCoordinate(this.dimensions, increment);
-    this.increment = increment;
+  runProcessing(): void {
+    this.imageData = this.context.createImageData(this.fractalSettingsService.dimensions.x, this.fractalSettingsService.dimensions.y);
+    this.topLeftCoord = this.fractalSettingsService.center.computeTopLeftCoordinate(
+      this.fractalSettingsService.dimensions,
+      this.fractalSettingsService.increment
+    );
 
     this.workerService.doWork(new ProcessFractalInfo(
       this.topLeftCoord,
-      this.dimensions,
-      increment,
-      new MandelbrotSetParams(100, 2)
+      this.fractalSettingsService.dimensions,
+      this.fractalSettingsService.increment,
+      this.fractalSettingsService.fractalParams
     ));
   }
 
   pointClicked($event: MouseEvent): void {
     const point = new Point($event.offsetX, $event.offsetY);
-    const coord = point.toCoordinate(this.topLeftCoord, this.increment);
-    this.runProcessing(coord, this.increment / 2);
+    const coord = point.toCoordinate(this.topLeftCoord, this.fractalSettingsService.increment);
+    this.fractalSettingsService.center = coord;
+    this.fractalSettingsService.zoom = this.fractalSettingsService.zoom * this.fractalSettingsService.zoomFactor;
+    this.fractalSettingsService.updated.emit();
   }
 
   hoverLocation($event: MouseEvent): void {
     const point = new Point($event.offsetX, $event.offsetY);
-    const coord = point.toCoordinate(this.topLeftCoord, this.increment);
+    const coord = point.toCoordinate(this.topLeftCoord, this.fractalSettingsService.increment);
     this.hoverLocationChanged.emit(coord);
+  }
+
+  private updateDimensions(): void {
+    this.fractalSettingsService.dimensions = new Point(this.context.canvas.offsetWidth, this.context.canvas.offsetHeight);
+
+    this.myCanvas.nativeElement.width  = this.fractalSettingsService.dimensions.x;
+    this.myCanvas.nativeElement.height = this.fractalSettingsService.dimensions.y;
   }
 
   // Drawing
@@ -80,14 +91,19 @@ export class FractalCanvasComponent implements AfterViewInit {
   }
 
   private setPixelsOnImageData(computedPoints: ComputedPoint[]) {
+    const adjustedMaxIterations = this.fractalSettingsService.fractalParams.maxIterations - this.fractalSettingsService.minColorValue;
+
     computedPoints.forEach(cp => {
-      const colorIndices = this.getColorIndicesForPoint(cp.point, this.dimensions.x);
+      const colorIndices = this.getColorIndicesForPoint(cp.point, this.fractalSettingsService.dimensions.x);
       const [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
 
-      this.imageData.data[redIndex] = this.colorScheme.getRed(cp.value, 100);
-      this.imageData.data[greenIndex] = this.colorScheme.getGreen(cp.value, 100);
-      this.imageData.data[blueIndex] = this.colorScheme.getBlue(cp.value, 100);
-      this.imageData.data[alphaIndex] = this.colorScheme.getAlpha(cp.value, 100);
+      const adjustedValue = cp.value < this.fractalSettingsService.minColorValue ?
+        0 : cp.value - this.fractalSettingsService.minColorValue;
+
+      this.imageData.data[redIndex] = this.fractalSettingsService.colorScheme.getRed(adjustedValue, adjustedMaxIterations);
+      this.imageData.data[greenIndex] = this.fractalSettingsService.colorScheme.getGreen(adjustedValue, adjustedMaxIterations);
+      this.imageData.data[blueIndex] = this.fractalSettingsService.colorScheme.getBlue(adjustedValue, adjustedMaxIterations);
+      this.imageData.data[alphaIndex] = this.fractalSettingsService.colorScheme.getAlpha(adjustedValue, adjustedMaxIterations);
     });
   }
 

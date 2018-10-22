@@ -3,17 +3,9 @@
 </mat-toolbar>
 
 <div>
-  <mat-card>
-    <button mat-raised-button>Refresh</button>
+  <app-fractal-settings></app-fractal-settings>
+
+  <mat-card class="fractal-display">
+    <app-fractal-canvas></app-fractal-canvas>
   </mat-card>
-
-  <div>
-    <mat-card class="fractal-controls">
-      <button mat-raised-button>Apply</button>
-    </mat-card>
-
-    <mat-card class="fractal-display">
-      <app-fractal-canvas></app-fractal-canvas>
-    </mat-card>
-  </div>
 </div>
