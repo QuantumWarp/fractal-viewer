@@ -4,10 +4,11 @@ import { Point } from '../shared/point';
 import { WorkerMessageType } from './worker-message.enum';
 import { WorkerMessage } from './worker-message.interface';
 
-export class ProcessFractalInfo implements WorkerMessage {
-  type = WorkerMessageType.ProcessFractalInfo;
+export class ProcessFractalStart implements WorkerMessage {
+  type = WorkerMessageType.ProcessFractalStart;
 
   constructor(
+    public processId: number,
     public topLeftCoord: Coordinate,
     public dimensions: Point,
     public increment: number,

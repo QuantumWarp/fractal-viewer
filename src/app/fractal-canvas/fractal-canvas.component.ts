@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { filter } from 'rxjs/operators';
-import { ProcessFractalInfo } from 'worker/app-workers/messages/process-fractal-info';
+import { ProcessFractalStart } from 'worker/app-workers/messages/process-fractal-start';
 import { ProcessFractalResults } from 'worker/app-workers/messages/process-fractal-results';
 import { WorkerMessageType } from 'worker/app-workers/messages/worker-message.enum';
 
@@ -18,11 +18,14 @@ import { FractalSettingsService } from '../services/fractal-settings.service';
   styleUrls: ['./fractal-canvas.component.scss']
 })
 export class FractalCanvasComponent implements AfterViewInit {
+  private static count = 1;
+
   @Output() hoverLocationChanged = new EventEmitter<Coordinate>();
   @ViewChild('myCanvas') myCanvas: ElementRef;
 
   private topLeftCoord: Coordinate;
 
+  private currentProcess: number;
   private context: CanvasRenderingContext2D;
   private imageData: ImageData;
 
@@ -37,7 +40,7 @@ export class FractalCanvasComponent implements AfterViewInit {
     this.updateDimensions();
 
     this.workerService.workerUpdate$.pipe(
-      filter(x => x.type === WorkerMessageType.ProcessFractalResults)
+      filter(x => x.type === WorkerMessageType.ProcessFractalResults && this.currentProcess === x.processId)
     ).subscribe(message => this.setPixelsOnImageData((message as ProcessFractalResults).computedPoints));
 
     this.fractalSettingsService.updated.subscribe(() => this.runProcessing());
@@ -54,7 +57,9 @@ export class FractalCanvasComponent implements AfterViewInit {
       this.fractalSettingsService.increment
     );
 
-    this.workerService.doWork(new ProcessFractalInfo(
+    this.currentProcess = FractalCanvasComponent.count++;
+    this.workerService.doWork(new ProcessFractalStart(
+      this.currentProcess,
       this.topLeftCoord,
       this.fractalSettingsService.dimensions,
       this.fractalSettingsService.increment,

@@ -1,16 +1,17 @@
 import { FractalFactory } from '../fractals/shared/fractal-factory';
 import { Fractal } from '../fractals/shared/fractal.interface';
-import { ProcessFractalInfo } from '../messages/process-fractal-info';
+import { ProcessFractalStart } from '../messages/process-fractal-start';
 import { ComputedPoint } from '../shared/computed-point';
 import { Point } from '../shared/point';
 
 export class FractalProcessor {
-  public computedCoords: ComputedPoint[] = [];
-
+  private computedCoords: ComputedPoint[] = [];
   private fractal: Fractal<any>;
 
+  public cancelled = false;
+
   constructor(
-    public params: ProcessFractalInfo) {
+    public params: ProcessFractalStart) {
     this.fractal = FractalFactory.create(params.fractalParams);
   }
 
@@ -25,6 +26,7 @@ export class FractalProcessor {
         const coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
         const iterations = this.fractal.calculate(coord);
         this.computedCoords.push(new ComputedPoint(point, iterations));
+        if (this.cancelled) { return; }
         y++;
       }
 

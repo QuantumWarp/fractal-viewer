@@ -88,12 +88,16 @@ var worker_message_enum_1 = __webpack_require__(/*! ./messages/worker-message.en
 var AppWorkers = /** @class */ (function () {
     function AppWorkers(workerCtx) {
         this.workerCtx = workerCtx;
+        this.processorMap = new Map();
     }
     AppWorkers.prototype.workerBroker = function ($event) {
         var message = $event.data;
         switch (message.type) {
-            case worker_message_enum_1.WorkerMessageType.ProcessFractalInfo:
+            case worker_message_enum_1.WorkerMessageType.ProcessFractalStart:
                 this.startProcessor(message);
+                break;
+            case worker_message_enum_1.WorkerMessageType.ProcessFractalCancel:
+                this.cancelProcessor(message);
                 break;
             default:
                 console.error('Message not recognized');
@@ -102,10 +106,19 @@ var AppWorkers = /** @class */ (function () {
     AppWorkers.prototype.startProcessor = function (params) {
         var _this = this;
         var processor = new fractal_processor_1.FractalProcessor(params);
+        this.processorMap.set(params.processId, processor);
         processor.process(function (coords) {
-            return _this.workerCtx.postMessage(new process_fractal_results_1.ProcessFractalResults(coords));
+            return _this.workerCtx.postMessage(new process_fractal_results_1.ProcessFractalResults(params.processId, coords));
         });
-        this.workerCtx.postMessage(new process_fractal_done_1.ProcessFractalDone());
+        this.workerCtx.postMessage(new process_fractal_done_1.ProcessFractalDone(params.processId, processor.cancelled));
+    };
+    AppWorkers.prototype.cancelProcessor = function (params) {
+        if (!this.processorMap.has(params.processId)) {
+            return;
+        }
+        var processor = this.processorMap.get(params.processId);
+        processor.cancelled = true;
+        this.processorMap.set(params.processId, processor);
     };
     return AppWorkers;
 }());
@@ -131,6 +144,7 @@ var FractalProcessor = /** @class */ (function () {
     function FractalProcessor(params) {
         this.params = params;
         this.computedCoords = [];
+        this.cancelled = false;
         this.fractal = fractal_factory_1.FractalFactory.create(params.fractalParams);
     }
     FractalProcessor.prototype.process = function (resultCallback) {
@@ -142,6 +156,9 @@ var FractalProcessor = /** @class */ (function () {
                 var coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
                 var iterations = this.fractal.calculate(coord);
                 this.computedCoords.push(new computed_point_1.ComputedPoint(point, iterations));
+                if (this.cancelled) {
+                    return;
+                }
                 y++;
             }
             resultCallback(this.computedCoords);
@@ -271,7 +288,6 @@ var FractalFactory = /** @class */ (function () {
     function FractalFactory() {
     }
     FractalFactory.create = function (params) {
-        console.log(params);
         switch (params.type) {
             case fractal_type_enum_1.FractalType.MandelbrotSet:
                 return new mandelbrot_set_1.MandelbrotSet(params);
@@ -317,7 +333,9 @@ var FractalType;
 Object.defineProperty(exports, "__esModule", { value: true });
 var worker_message_enum_1 = __webpack_require__(/*! ./worker-message.enum */ "./worker/app-workers/messages/worker-message.enum.ts");
 var ProcessFractalDone = /** @class */ (function () {
-    function ProcessFractalDone() {
+    function ProcessFractalDone(processId, cancelled) {
+        this.processId = processId;
+        this.cancelled = cancelled;
         this.type = worker_message_enum_1.WorkerMessageType.ProcessFractalDone;
     }
     return ProcessFractalDone;
@@ -339,7 +357,8 @@ exports.ProcessFractalDone = ProcessFractalDone;
 Object.defineProperty(exports, "__esModule", { value: true });
 var worker_message_enum_1 = __webpack_require__(/*! ./worker-message.enum */ "./worker/app-workers/messages/worker-message.enum.ts");
 var ProcessFractalResults = /** @class */ (function () {
-    function ProcessFractalResults(computedPoints) {
+    function ProcessFractalResults(processId, computedPoints) {
+        this.processId = processId;
         this.computedPoints = computedPoints;
         this.type = worker_message_enum_1.WorkerMessageType.ProcessFractalResults;
     }
@@ -362,9 +381,10 @@ exports.ProcessFractalResults = ProcessFractalResults;
 Object.defineProperty(exports, "__esModule", { value: true });
 var WorkerMessageType;
 (function (WorkerMessageType) {
-    WorkerMessageType[WorkerMessageType["ProcessFractalInfo"] = 0] = "ProcessFractalInfo";
-    WorkerMessageType[WorkerMessageType["ProcessFractalResults"] = 1] = "ProcessFractalResults";
-    WorkerMessageType[WorkerMessageType["ProcessFractalDone"] = 2] = "ProcessFractalDone";
+    WorkerMessageType[WorkerMessageType["ProcessFractalStart"] = 0] = "ProcessFractalStart";
+    WorkerMessageType[WorkerMessageType["ProcessFractalCancel"] = 1] = "ProcessFractalCancel";
+    WorkerMessageType[WorkerMessageType["ProcessFractalResults"] = 2] = "ProcessFractalResults";
+    WorkerMessageType[WorkerMessageType["ProcessFractalDone"] = 3] = "ProcessFractalDone";
 })(WorkerMessageType = exports.WorkerMessageType || (exports.WorkerMessageType = {}));
 
 

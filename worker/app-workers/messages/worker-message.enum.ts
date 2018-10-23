@@ -1,5 +1,6 @@
 export enum WorkerMessageType {
-  ProcessFractalInfo,
+  ProcessFractalStart,
+  ProcessFractalCancel,
   ProcessFractalResults,
   ProcessFractalDone,
 }

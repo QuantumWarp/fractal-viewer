@@ -5,5 +5,7 @@ import { ComputedPoint } from '../shared/computed-point';
 export class ProcessFractalResults implements WorkerMessage {
   type = WorkerMessageType.ProcessFractalResults;
 
-  constructor(public computedPoints: ComputedPoint[]) { }
+  constructor(
+    public processId: number,
+    public computedPoints: ComputedPoint[]) { }
 }
