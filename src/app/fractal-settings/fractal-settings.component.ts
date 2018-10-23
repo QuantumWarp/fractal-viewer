@@ -94,7 +94,7 @@ export class FractalSettingsComponent implements OnInit {
     const downloader = new FractalImageLoader(
       this.fractalSettingsService.center,
       this.fractalSettingsService.increment,
-      new Point(1920, 1080),
+      new Point(screen.width, screen.height),
       this.fractalSettingsService.fractalParams,
       this.fractalSettingsService.minColorValue,
       this.fractalSettingsService.colorScheme,
@@ -102,16 +102,17 @@ export class FractalSettingsComponent implements OnInit {
 
     downloader.finished$.subscribe(() => {
       const canvas = document.createElement('canvas');
-      canvas.width = 1920;
-      canvas.height = 1080;
+      canvas.width = screen.width;
+      canvas.height = screen.height;
 
       canvas.getContext('2d').putImageData(downloader.imageData, 0, 0);
-      this.saveCanvas(canvas, 'fractaldownload');
+      canvas.toBlob(blob => this.saveBlob(blob, 'fractal'));
     });
   }
 
-  private saveCanvas(canvas: HTMLCanvasElement, fileName: string) {
-    const canvasDataUrl = canvas.toDataURL('image/png');
+  private saveBlob(blob: Blob, fileName: string) {
+    const canvasDataUrl = URL.createObjectURL(blob);
+
     const link = document.createElement('a');
 
     // set parameters for downloading
