@@ -2,7 +2,7 @@
   <button mat-raised-button (click)="applySettings()">Apply Settings</button>
   <button mat-raised-button (click)="resetZoom()">Reset Zoom</button>
   <button mat-raised-button (click)="resetAll()">Reset All</button>
-  <button mat-raised-button>Download</button>
+  <button mat-raised-button (click)="download()">Download</button>
 </mat-card>
 
 <mat-card>
@@ -24,7 +24,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Zoom Factor" formControlName="zoomFactor" 
+      <input matInput placeholder="Zoom Factor" formControlName="zoomFactor"
         matTooltip="This specifies how much clicking will zoom in." />
     </mat-form-field>
 
@@ -47,7 +47,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Min Color Value" formControlName="minColorValue" 
+      <input matInput placeholder="Min Color Value" formControlName="minColorValue"
         matTooltip="This can be used when very zoomed in to spread the color over a smaller range of values."/>
     </mat-form-field>
   </form>

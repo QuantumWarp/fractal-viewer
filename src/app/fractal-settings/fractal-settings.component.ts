@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Coordinate } from 'worker/app-workers/shared/coordinate';
 
-import { MandelbrotSetParams } from '../../../worker/app-workers/fractals/mandelbrot-set-params';
+import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
 import { FractalType } from '../../../worker/app-workers/fractals/shared/fractal-type.enum';
 import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
+import { FractalImageLoader } from '../fractal-canvas/fractal-image-loader';
 import { FractalSettingsService } from '../services/fractal-settings.service';
-import { FractalFactory } from 'worker/app-workers/fractals/shared/fractal-factory';
-import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
+import { WorkerService } from '../services/worker.service';
+import { Point } from '../../../worker/app-workers/shared/point';
 
 @Component({
   selector: 'app-fractal-settings',
@@ -23,6 +24,7 @@ export class FractalSettingsComponent implements OnInit {
 
   constructor(
     private fractalSettingsService: FractalSettingsService,
+    private workerService: WorkerService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -86,5 +88,37 @@ export class FractalSettingsComponent implements OnInit {
     this.fractalSettingsService.fractalParams.maxIterations = 100;
     this.fractalSettingsService.fractalParams.bound = 2;
     this.fractalSettingsService.updated.emit();
+  }
+
+  download(): void {
+    const downloader = new FractalImageLoader(
+      this.fractalSettingsService.center,
+      this.fractalSettingsService.increment,
+      new Point(1920, 1080),
+      this.fractalSettingsService.fractalParams,
+      this.fractalSettingsService.minColorValue,
+      this.fractalSettingsService.colorScheme,
+      this.workerService);
+
+    downloader.finished$.subscribe(() => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1920;
+      canvas.height = 1080;
+
+      canvas.getContext('2d').putImageData(downloader.imageData, 0, 0);
+      this.saveCanvas(canvas, 'fractaldownload');
+    });
+  }
+
+  private saveCanvas(canvas: HTMLCanvasElement, fileName: string) {
+    const canvasDataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+
+    // set parameters for downloading
+    link.setAttribute('href', canvasDataUrl);
+    link.setAttribute('target', '_blank');
+    link.setAttribute('download', fileName);
+
+    link.click();
   }
 }

@@ -1,4 +1,4 @@
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { WorkerMessageType } from 'worker/app-workers/messages/worker-message.enum';
 
 import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
@@ -10,17 +10,23 @@ import { Point } from '../../../worker/app-workers/shared/point';
 import { ColorScheme } from '../color-schemes/color-scheme.interface';
 import { WorkerService } from '../services/worker.service';
 import { ProcessFractalCancel } from '../../../worker/app-workers/messages/process-fractal-cancel';
+import { EventEmitter } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 export class FractalImageLoader {
+  private static count = 1;
+
+  private processId = FractalImageLoader.count++;
+
+  finished$ = new Subject<void>();
 
   topLeftCoord: Coordinate;
   imageData: ImageData;
 
   constructor(
-    private processId: number,
-    private center: Coordinate,
-    private increment: number,
-    private dimensions: Point,
+    center: Coordinate,
+    increment: number,
+    public dimensions: Point,
     private fractalParams: FractalParams,
     private minColorValue: number,
     private colorScheme: ColorScheme,
@@ -35,16 +41,25 @@ export class FractalImageLoader {
     );
 
     workerService.doWork(new ProcessFractalStart(
-      processId,
+      this.processId,
       this.topLeftCoord,
       dimensions,
       increment,
       fractalParams
     ));
 
-    workerService.workerUpdate$.pipe(
-      filter(x => x.type === WorkerMessageType.ProcessFractalResults && processId === x.processId)
+    const resultsSub = workerService.workerUpdate$.pipe(
+      filter(x => x.type === WorkerMessageType.ProcessFractalResults && this.processId === x.processId)
     ).subscribe(message => this.setPixelsOnImageData((message as ProcessFractalResults).computedPoints));
+
+    workerService.workerUpdate$.pipe(
+      filter(x => x.type === WorkerMessageType.ProcessFractalDone && this.processId === x.processId),
+      take(1)
+    ).subscribe(() => {
+      resultsSub.unsubscribe();
+      this.finished$.next();
+      this.finished$.complete();
+    });
   }
 
   cancel(): void {
