@@ -1,5 +1,13 @@
 <mat-toolbar class="mat-elevation-z4">
-  Fractal Viewer
+  <div class="logo-container">
+    <img class="fractal-logo" src="assets/fractal-icon.png">
+  </div>
+  <div class="title">Fractal Viewer</div>
+  <div class="help-button">
+    <button mat-button (click)="openAbout()">
+      <mat-icon>help</mat-icon>
+    </button>
+  </div>
 </mat-toolbar>
 
 <div>

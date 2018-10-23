@@ -1,0 +1,25 @@
+mat-card {
+  padding: 0px;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.actions {
+  padding: 10px;
+}
+
+.section {
+  margin-top: 10px;
+
+  > .section-header {
+    font-weight: bold;
+  }
+
+  > .section-content {
+    color: gray;
+    width: 600px;
+  }
+}
+

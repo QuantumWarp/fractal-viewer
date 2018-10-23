@@ -1,5 +1,34 @@
 mat-toolbar {
   z-index: 10;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  > .logo-container {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+
+    > .fractal-logo {
+      width: 45px;
+      height: 45px;
+    }
+  }
+
+  > .help-button {
+    display: flex;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  > .title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 25px;
+  }
 }
 
 :host {
