@@ -1,0 +1,21 @@
+<mat-toolbar>Download Resolution</mat-toolbar>
+
+<form [formGroup]="form">
+
+  <mat-form-field>
+    <input matInput placeholder="Width" formControlName="width" required />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Height" formControlName="height" required />
+  </mat-form-field>
+
+</form>
+
+<mat-toolbar class="action-buttons">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button (click)="confirm()" mat-raised-button color="primary" [disabled]="!form.valid"
+    matTooltip="Note: This does not scale the current image. A new fractal will be calculated with the current settings but with the specified dimensions.">
+    Confirm
+  </button>
+</mat-toolbar>

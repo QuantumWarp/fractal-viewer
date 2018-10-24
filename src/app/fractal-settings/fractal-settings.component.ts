@@ -9,6 +9,8 @@ import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
 import { FractalImageLoader } from '../fractal-canvas/fractal-image-loader';
 import { FractalSettingsService } from '../services/fractal-settings.service';
+import { MatDialog } from '@angular/material';
+import { ResolutionModalComponent } from '../resolution-modal/resolution-modal.component';
 
 @Component({
   selector: 'app-fractal-settings',
@@ -23,6 +25,7 @@ export class FractalSettingsComponent implements OnInit {
   form: FormGroup;
 
   constructor(
+    private dialog: MatDialog,
     private fractalSettingsService: FractalSettingsService,
     private formBuilder: FormBuilder) { }
 
@@ -90,20 +93,28 @@ export class FractalSettingsComponent implements OnInit {
   }
 
   download(): void {
+    this.dialog.open(ResolutionModalComponent).afterClosed().subscribe(dimensions => {
+      if (!dimensions) { return; }
+      this.downloadWithDimensions(dimensions.width, dimensions.height);
+    });
+
+  }
+
+  private downloadWithDimensions(width: number, height: number) {
     this.downloading = true;
 
     const downloader = new FractalImageLoader(
       this.fractalSettingsService.center,
       this.fractalSettingsService.increment,
-      new Point(screen.width, screen.height),
+      new Point(width, height),
       this.fractalSettingsService.fractalParams,
       this.fractalSettingsService.minColorValue,
       this.fractalSettingsService.colorScheme);
 
     downloader.worker.doneUpdate$.subscribe(() => {
       const canvas = document.createElement('canvas');
-      canvas.width = screen.width;
-      canvas.height = screen.height;
+      canvas.width = width;
+      canvas.height = height;
 
       canvas.getContext('2d').putImageData(downloader.imageData, 0, 0);
       canvas.toBlob(blob => this.saveBlob(blob, 'fractal'));
