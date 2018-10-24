@@ -4,6 +4,8 @@ import { Point } from 'worker/app-workers/shared/point';
 import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
 import { FractalSettingsService } from '../services/fractal-settings.service';
 import { FractalImageLoader } from './fractal-image-loader';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-fractal-canvas',
@@ -14,6 +16,8 @@ export class FractalCanvasComponent implements AfterViewInit {
   @Output() hoverLocationChanged = new EventEmitter<Coordinate>();
   @ViewChild('myCanvas') myCanvas: ElementRef;
 
+  resize$ = new Subject();
+
   private context: CanvasRenderingContext2D;
   private fractalImageLoader: FractalImageLoader;
 
@@ -23,6 +27,14 @@ export class FractalCanvasComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.context = (<HTMLCanvasElement>this.myCanvas.nativeElement).getContext('2d');
+
+    // Redraw on resize
+    this.resize$.pipe(
+      debounceTime(500),
+    ).subscribe(() => {
+      this.updateDimensions();
+      this.runProcessing();
+    });
 
     this.updateDimensions();
     requestAnimationFrame(() => this.paint());
