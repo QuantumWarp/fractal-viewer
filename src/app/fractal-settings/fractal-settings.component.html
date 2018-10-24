@@ -1,5 +1,5 @@
 <mat-card class="buttons">
-  <button mat-raised-button (click)="applySettings()">Apply Settings</button>
+  <button mat-raised-button (click)="applySettings()" [disabled]="!form.valid">Apply Settings</button>
   <button mat-raised-button (click)="resetZoom()">Reset Zoom</button>
   <button mat-raised-button (click)="resetAll()">Reset All</button>
   <button mat-raised-button (click)="download()">Download</button>
@@ -20,34 +20,34 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Zoom" formControlName="zoom" />
+      <input matInput placeholder="Zoom" formControlName="zoom" type="number" required />
     </mat-form-field>
 
     <mat-form-field>
       <input matInput placeholder="Zoom Factor" formControlName="zoomFactor"
+        matTooltip="This specifies how much clicking will zoom in." type="number" required />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Center X" formControlName="centerX" type="number" required />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Center Y" formControlName="centerY" type="number" required />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Bound" formControlName="bound" type="number" required
         matTooltip="This specifies how much clicking will zoom in." />
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Center X" formControlName="centerX" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Center Y" formControlName="centerY" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Bound" formControlName="bound"
-        matTooltip="This specifies how much clicking will zoom in." />
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Max Iterations" formControlName="maxIterations"
+      <input matInput placeholder="Max Iterations" formControlName="maxIterations" type="number" required
         matTooltip="This specifies how many iterations are performed to check if the bound value is reached." />
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Min Color Value" formControlName="minColorValue"
+      <input matInput placeholder="Min Color Value" formControlName="minColorValue" type="number" required
         matTooltip="This can be used when very zoomed in to spread the color over a smaller range of values."/>
     </mat-form-field>
   </form>

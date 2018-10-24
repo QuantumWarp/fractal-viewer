@@ -83,7 +83,7 @@ export class FractalSettingsComponent implements OnInit {
     this.fractalSettingsService.colorScheme = ColorSchemeFactory.create(ColorSchemeType.Greenscale);
     this.fractalSettingsService.zoom = 1;
     this.fractalSettingsService.center = new Coordinate(0, 0);
-    this.fractalSettingsService.fractalParams.maxIterations = 100;
+    this.fractalSettingsService.fractalParams.maxIterations = 250;
     this.fractalSettingsService.fractalParams.bound = 2;
     this.fractalSettingsService.updated.emit();
   }
