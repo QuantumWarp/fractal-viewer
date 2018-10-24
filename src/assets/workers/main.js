@@ -105,7 +105,7 @@ var AppWorkers = /** @class */ (function () {
         processor.process(function (coords) {
             return _this.workerCtx.postMessage(new process_fractal_results_1.ProcessFractalResults(coords));
         });
-        this.workerCtx.postMessage(new process_fractal_done_1.ProcessFractalDone(processor.cancelled));
+        this.workerCtx.postMessage(new process_fractal_done_1.ProcessFractalDone());
     };
     return AppWorkers;
 }());
@@ -131,26 +131,48 @@ var FractalProcessor = /** @class */ (function () {
     function FractalProcessor(params) {
         this.params = params;
         this.computedCoords = [];
-        this.cancelled = false;
         this.fractal = fractal_factory_1.FractalFactory.create(params.fractalParams);
     }
     FractalProcessor.prototype.process = function (resultCallback) {
-        var x = 0;
-        while (x < this.params.dimensions.x) {
-            var y = 0;
-            while (y < this.params.dimensions.y) {
-                var point = new point_1.Point(x, y);
-                var coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
-                var iterations = this.fractal.calculate(coord);
-                this.computedCoords.push(new computed_point_1.ComputedPoint(point, iterations));
-                if (this.cancelled) {
-                    return;
-                }
-                y++;
-            }
+        var point = this.nextPoint();
+        var count = 0;
+        while (point) {
+            var coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
+            var iterations = this.fractal.calculate(coord);
+            this.computedCoords.push(new computed_point_1.ComputedPoint(point, iterations));
+            this.checkEmitResults(count, resultCallback);
+            count++;
+            point = this.nextPoint(point);
+        }
+        this.checkEmitResults(count, resultCallback, true);
+    };
+    FractalProcessor.prototype.checkEmitResults = function (count, resultCallback, force) {
+        if (force === void 0) { force = false; }
+        if (force || count % this.params.dimensions.y === 0) {
             resultCallback(this.computedCoords);
             this.computedCoords = [];
-            x++;
+        }
+    };
+    FractalProcessor.prototype.nextPoint = function (point) {
+        var midway = Math.floor(this.params.dimensions.x / 2);
+        if (!point) {
+            return new point_1.Point(midway, 0);
+        }
+        if (point.y !== this.params.dimensions.y - 1) {
+            return new point_1.Point(point.x, point.y + 1);
+        }
+        var newX;
+        if (point.x >= midway) {
+            newX = 2 * midway - point.x - 1;
+        }
+        else {
+            newX = 2 * midway - point.x;
+        }
+        if (newX === -1 || newX === this.params.dimensions.x) {
+            return undefined;
+        }
+        else {
+            return new point_1.Point(newX, 0);
         }
     };
     return FractalProcessor;
@@ -320,8 +342,7 @@ var FractalType;
 Object.defineProperty(exports, "__esModule", { value: true });
 var worker_message_enum_1 = __webpack_require__(/*! ./worker-message.enum */ "./worker/app-workers/messages/worker-message.enum.ts");
 var ProcessFractalDone = /** @class */ (function () {
-    function ProcessFractalDone(cancelled) {
-        this.cancelled = cancelled;
+    function ProcessFractalDone() {
         this.type = worker_message_enum_1.WorkerMessageType.ProcessFractalDone;
     }
     return ProcessFractalDone;

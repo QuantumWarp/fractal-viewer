@@ -24,6 +24,6 @@ export class AppWorkers {
     const processor = new FractalProcessor(params);
     processor.process((coords) =>
       this.workerCtx.postMessage(new ProcessFractalResults(coords)));
-    this.workerCtx.postMessage(new ProcessFractalDone(processor.cancelled));
+    this.workerCtx.postMessage(new ProcessFractalDone());
   }
 }

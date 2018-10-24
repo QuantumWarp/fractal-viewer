@@ -3,6 +3,4 @@ import { WorkerMessage } from './worker-message.interface';
 
 export class ProcessFractalDone implements WorkerMessage {
   type = WorkerMessageType.ProcessFractalDone;
-
-  constructor(public cancelled: boolean) { }
 }
