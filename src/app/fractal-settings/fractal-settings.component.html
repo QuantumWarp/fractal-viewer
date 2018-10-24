@@ -2,7 +2,12 @@
   <button mat-raised-button (click)="applySettings()" [disabled]="!form.valid">Apply Settings</button>
   <button mat-raised-button (click)="resetZoom()">Reset Zoom</button>
   <button mat-raised-button (click)="resetAll()">Reset All</button>
-  <button mat-raised-button (click)="download()">Download</button>
+  <button mat-raised-button (click)="download()" [disabled]="downloading">
+    <div class="downloading-button">
+      <div>{{ downloading ? 'Downloading' : 'Download' }}</div>
+      <mat-spinner *ngIf="downloading" strokeWidth="3" diameter="20"></mat-spinner>
+    </div>
+  </button>
 </mat-card>
 
 <mat-card>

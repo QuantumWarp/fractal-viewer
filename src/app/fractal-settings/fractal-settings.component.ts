@@ -19,6 +19,7 @@ export class FractalSettingsComponent implements OnInit {
   fractalTypes = FractalType;
   colorSchemes = ColorSchemeType;
 
+  downloading = false;
   form: FormGroup;
 
   constructor(
@@ -89,6 +90,8 @@ export class FractalSettingsComponent implements OnInit {
   }
 
   download(): void {
+    this.downloading = true;
+
     const downloader = new FractalImageLoader(
       this.fractalSettingsService.center,
       this.fractalSettingsService.increment,
@@ -118,5 +121,7 @@ export class FractalSettingsComponent implements OnInit {
     link.setAttribute('download', fileName);
 
     link.click();
+
+    this.downloading = false;
   }
 }

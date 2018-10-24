@@ -11,6 +11,7 @@ import {
   MatSelectModule,
   MatToolbarModule,
   MatTooltipModule,
+  MatProgressSpinnerModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -51,6 +52,7 @@ import { KeysPipe } from './services/keys.pipe';
     MatTooltipModule,
     MatDialogModule,
     MatIconModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     FractalSettingsService,

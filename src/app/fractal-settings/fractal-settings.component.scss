@@ -12,6 +12,16 @@
   margin-bottom: 20px;
 }
 
+.downloading-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > mat-spinner {
+    margin-left: 4px;
+  }
+}
+
 mat-card > form {
   display: flex;
   flex-wrap: wrap;
