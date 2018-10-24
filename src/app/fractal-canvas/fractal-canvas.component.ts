@@ -3,7 +3,6 @@ import { Point } from 'worker/app-workers/shared/point';
 
 import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
 import { FractalSettingsService } from '../services/fractal-settings.service';
-import { WorkerService } from '../services/worker.service';
 import { FractalImageLoader } from './fractal-image-loader';
 
 @Component({
@@ -20,8 +19,7 @@ export class FractalCanvasComponent implements AfterViewInit {
 
   constructor(
     public cdr: ChangeDetectorRef,
-    public fractalSettingsService: FractalSettingsService,
-    public workerService: WorkerService) { }
+    public fractalSettingsService: FractalSettingsService) { }
 
   ngAfterViewInit(): void {
     this.context = (<HTMLCanvasElement>this.myCanvas.nativeElement).getContext('2d');
@@ -41,8 +39,7 @@ export class FractalCanvasComponent implements AfterViewInit {
       this.fractalSettingsService.dimensions,
       this.fractalSettingsService.fractalParams,
       this.fractalSettingsService.minColorValue,
-      this.fractalSettingsService.colorScheme,
-      this.workerService);
+      this.fractalSettingsService.colorScheme);
   }
 
   pointClicked($event: MouseEvent): void {

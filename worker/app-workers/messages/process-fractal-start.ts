@@ -8,7 +8,6 @@ export class ProcessFractalStart implements WorkerMessage {
   type = WorkerMessageType.ProcessFractalStart;
 
   constructor(
-    public processId: number,
     public topLeftCoord: Coordinate,
     public dimensions: Point,
     public increment: number,

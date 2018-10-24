@@ -4,12 +4,11 @@ import { Coordinate } from 'worker/app-workers/shared/coordinate';
 
 import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
 import { FractalType } from '../../../worker/app-workers/fractals/shared/fractal-type.enum';
+import { Point } from '../../../worker/app-workers/shared/point';
 import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
 import { FractalImageLoader } from '../fractal-canvas/fractal-image-loader';
 import { FractalSettingsService } from '../services/fractal-settings.service';
-import { WorkerService } from '../services/worker.service';
-import { Point } from '../../../worker/app-workers/shared/point';
 
 @Component({
   selector: 'app-fractal-settings',
@@ -24,7 +23,6 @@ export class FractalSettingsComponent implements OnInit {
 
   constructor(
     private fractalSettingsService: FractalSettingsService,
-    private workerService: WorkerService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -97,10 +95,9 @@ export class FractalSettingsComponent implements OnInit {
       new Point(screen.width, screen.height),
       this.fractalSettingsService.fractalParams,
       this.fractalSettingsService.minColorValue,
-      this.fractalSettingsService.colorScheme,
-      this.workerService);
+      this.fractalSettingsService.colorScheme);
 
-    downloader.finished$.subscribe(() => {
+    downloader.worker.doneUpdate$.subscribe(() => {
       const canvas = document.createElement('canvas');
       canvas.width = screen.width;
       canvas.height = screen.height;
