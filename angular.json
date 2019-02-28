@@ -1,5 +1,4 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -48,8 +47,12 @@
           }
         },
         "build-worker": {
-          "builder": "@angular-devkit/build-angular:server",
+          "builder": "@angular-builders/custom-webpack:server",
           "options": {
+            "customWebpackConfig": {
+              "path": "./worker/webpack.webworker.config.js",
+              "mergeStrategies": { "externals": "append" }
+            },
             "outputPath": "src/assets/workers",
             "main": "worker/main.worker.ts",
             "tsConfig": "worker/tsconfig.worker.json"
@@ -67,11 +70,16 @@
           }
         },
         "serve-worker": {
-          "builder": "@angular-devkit/build-angular:server",
+          "builder": "@angular-builders/custom-webpack:server",
           "options": {
+            "customWebpackConfig": {
+              "path": "./worker/webpack.webworker.config.js",
+              "mergeStrategies": { "externals": "append" }
+            },
             "outputPath": "src/assets/workers",
             "main": "worker/main.worker.ts",
-            "tsConfig": "worker/tsconfig.worker.json"
+            "tsConfig": "worker/tsconfig.worker.json",
+            "watch": true
           }
         },
         "extract-i18n": {

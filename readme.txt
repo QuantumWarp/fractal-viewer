@@ -1,7 +1,8 @@
-The build-worker and serve-worker sections have been added to angular.
-Note: serve-worker not really working as expected, shouldn't error on npm start.
+The build-worker and serve-worker sections have been added to angular.json.
+Two packages have been added to assist with compilation of the worker correctly:
+    angular-devkit/build-angular
+    replace-in-file-webpack-plugin
+Worker is compiled into assets/workers/main.js.
+Used https://github.com/patidar-suresh/angular6-webworker as a reference.
 
-Run npm start to regenerate the worker. It gets saved into assets/workers.
-The first exports part of the main.js needs to be removed since it doesn't work.
-
-Then run like usual with 'ng s'.
+Use 'npm run start' to serve and 'npm run build' to build.
