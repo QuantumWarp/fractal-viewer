@@ -5,6 +5,10 @@
 
 form {
   padding: 20px;
+
+  > * {
+    margin: 0px 5px;
+  }
 }
 
 .action-buttons {

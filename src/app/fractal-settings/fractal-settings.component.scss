@@ -5,16 +5,24 @@
 }
 
 .buttons {
+  padding: 10px;
+  flex: none;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
   margin-bottom: 20px;
+
+  > button {
+    min-width: 140px;
+    flex: 1 0 34%;
+    margin: 5px;
+  }
 }
 
 .downloading-button {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
 
   > mat-spinner {
@@ -27,7 +35,8 @@ mat-card > form {
   flex-wrap: wrap;
 
   > * {
-    margin-left: 20px;
+    flex: 1 0 34%;
+    margin: 0px 10px;
   }
 }
 

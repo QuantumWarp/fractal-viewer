@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild, OnDestroy } from '@angular/core';
 import { Point } from 'worker/app-workers/shared/point';
 
 import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
@@ -12,7 +12,7 @@ import { debounceTime } from 'rxjs/operators';
   templateUrl: './fractal-canvas.component.html',
   styleUrls: ['./fractal-canvas.component.scss']
 })
-export class FractalCanvasComponent implements AfterViewInit {
+export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
   @Output() hoverLocationChanged = new EventEmitter<Coordinate>();
   @ViewChild('myCanvas') myCanvas: ElementRef;
 
@@ -41,6 +41,10 @@ export class FractalCanvasComponent implements AfterViewInit {
 
     this.fractalSettingsService.updated.subscribe(() => this.runProcessing());
     this.runProcessing();
+  }
+
+  ngOnDestroy(): void {
+    this.resize$.complete();
   }
 
   runProcessing(): void {
