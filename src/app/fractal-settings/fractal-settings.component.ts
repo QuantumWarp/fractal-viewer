@@ -25,8 +25,8 @@ export class FractalSettingsComponent implements OnInit {
   form: FormGroup;
 
   constructor(
+    public fractalSettingsService: FractalSettingsService,
     private dialog: MatDialog,
-    private fractalSettingsService: FractalSettingsService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -59,37 +59,21 @@ export class FractalSettingsComponent implements OnInit {
   }
 
   applySettings(): void {
-    this.fractalSettingsService.zoomFactor = this.form.value.zoomFactor;
-    this.fractalSettingsService.colorScheme = ColorSchemeFactory.create(this.form.value.colorScheme);
-    this.fractalSettingsService.minColorValue = this.form.value.minColorValue;
-
-    this.fractalSettingsService.zoom = this.form.value.zoom;
-    this.fractalSettingsService.center = new Coordinate(
-      this.form.value.centerX,
-      this.form.value.centerY
+    this.fractalSettingsService.setSettings(
+      this.form.value.zoomFactor,
+      ColorSchemeFactory.create(this.form.value.colorScheme),
+      this.form.value.minColorValue,
+      this.form.value.zoom,
+      new Coordinate(
+        this.form.value.centerX,
+        this.form.value.centerY
+      ),
+      {
+        type: this.form.value.fractalType,
+        maxIterations: this.form.value.maxIterations,
+        bound: this.form.value.bound
+      },
     );
-    this.fractalSettingsService.fractalParams = <FractalParams> {
-      type: this.form.value.fractalType,
-      maxIterations: this.form.value.maxIterations,
-      bound: this.form.value.bound
-    };
-    this.fractalSettingsService.updated.emit();
-  }
-
-  resetZoom(): void {
-    this.fractalSettingsService.zoom = 1;
-    this.fractalSettingsService.center = new Coordinate(0, 0);
-    this.fractalSettingsService.updated.emit();
-  }
-
-  resetAll(): void {
-    this.fractalSettingsService.zoomFactor = 2;
-    this.fractalSettingsService.colorScheme = ColorSchemeFactory.create(ColorSchemeType.Greenscale);
-    this.fractalSettingsService.zoom = 1;
-    this.fractalSettingsService.center = new Coordinate(0, 0);
-    this.fractalSettingsService.fractalParams.maxIterations = 250;
-    this.fractalSettingsService.fractalParams.bound = 2;
-    this.fractalSettingsService.updated.emit();
   }
 
   download(): void {
@@ -97,7 +81,6 @@ export class FractalSettingsComponent implements OnInit {
       if (!dimensions) { return; }
       this.downloadWithDimensions(dimensions.width, dimensions.height);
     });
-
   }
 
   private downloadWithDimensions(width: number, height: number) {

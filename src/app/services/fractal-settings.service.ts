@@ -6,10 +6,10 @@ import { FractalParams } from '../../../worker/app-workers/fractals/shared/fract
 import { Point } from '../../../worker/app-workers/shared/point';
 import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
+import { ColorScheme } from '../color-schemes/color-scheme.interface';
 
 export class FractalSettingsService {
   private defaultPixelSize = 0.005;
-
   updated = new EventEmitter();
 
   get increment(): number {
@@ -34,8 +34,44 @@ export class FractalSettingsService {
     if (previousState) {
       Object.assign(this, JSON.parse(previousState, this.jsonReviver));
     }
+  }
 
-    this.updated.subscribe(() => localStorage.setItem('fractalState', JSON.stringify(this, this.jsonReplacer)));
+  setSettings(
+    zoomFactor: number,
+    colorScheme: ColorScheme,
+    minColorValue: number,
+    zoom: number,
+    center: Coordinate,
+    fractalParams: FractalParams,
+  ): void {
+    this.zoomFactor = zoomFactor;
+    this.colorScheme = colorScheme;
+    this.minColorValue = minColorValue;
+    this.zoom = zoom;
+    this.center = center;
+    this.fractalParams = fractalParams;
+    this.updateStorage();
+  }
+
+  resetZoom(): void {
+    this.zoom = 1;
+    this.center = new Coordinate(0, 0);
+    this.updateStorage();
+  }
+
+  resetAll(): void {
+    this.zoomFactor = 2;
+    this.colorScheme = ColorSchemeFactory.create(ColorSchemeType.Greenscale);
+    this.zoom = 1;
+    this.center = new Coordinate(0, 0);
+    this.fractalParams.maxIterations = 250;
+    this.fractalParams.bound = 2;
+    this.updateStorage();
+  }
+
+  private updateStorage(): void {
+    localStorage.setItem('fractalState', JSON.stringify(this, this.jsonReplacer));
+    this.updated.emit();
   }
 
   private jsonReviver(key: string, value: any): any {

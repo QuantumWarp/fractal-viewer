@@ -18,7 +18,6 @@ export class FractalProcessor {
     let count = 0;
 
     while (point) {
-
       const coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
       const iterations = this.fractal.calculate(coord);
       this.computedCoords.push(new ComputedPoint(point, iterations));
@@ -62,6 +61,5 @@ export class FractalProcessor {
     } else {
       return new Point(newX, 0);
     }
-
   }
 }
