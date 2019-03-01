@@ -30,15 +30,26 @@
   }
 }
 
-mat-card > form {
-  display: flex;
-  flex-wrap: wrap;
+mat-card {
+  > .help-text {
+    display: flex;
+    justify-content: center;
+    color: gray;
+    margin-bottom: 10px;
+  }
 
-  > * {
-    flex: 1 0 34%;
-    margin: 0px 10px;
+  > form {
+    display: flex;
+    flex-wrap: wrap;
+
+    > * {
+      flex: 1 0 34%;
+      margin: 0px 10px;
+    }
   }
 }
+
+
 
 input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;

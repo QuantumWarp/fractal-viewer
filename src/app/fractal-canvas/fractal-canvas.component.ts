@@ -5,7 +5,7 @@ import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
 import { FractalSettingsService } from '../services/fractal-settings.service';
 import { FractalImageLoader } from './fractal-image-loader';
 import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-fractal-canvas',
@@ -31,8 +31,9 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
     // Redraw on resize
     this.resize$.pipe(
       debounceTime(500),
-    ).subscribe(() => {
-      this.updateDimensions();
+      map(() => this.updateDimensions())
+    ).subscribe(triggerProcessing => {
+      if (!triggerProcessing) { return; }
       this.runProcessing();
     });
 
@@ -74,11 +75,16 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
     this.hoverLocationChanged.emit(coord);
   }
 
-  private updateDimensions(): void {
+  // TODO: Canvas should resize properly
+  private updateDimensions(): boolean {
     this.fractalSettingsService.dimensions = new Point(this.context.canvas.offsetWidth, this.context.canvas.offsetHeight);
+
+    const shouldTriggerResize = this.myCanvas.nativeElement.width !== this.fractalSettingsService.dimensions.x;
 
     this.myCanvas.nativeElement.width  = this.fractalSettingsService.dimensions.x;
     this.myCanvas.nativeElement.height = this.fractalSettingsService.dimensions.y;
+
+    return shouldTriggerResize;
   }
 
   private paint(): void {
