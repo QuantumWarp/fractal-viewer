@@ -63,9 +63,7 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
     if (!this.fractalImageLoader) { return; }
     const point = new Point($event.offsetX, $event.offsetY);
     const coord = point.toCoordinate(this.fractalImageLoader.topLeftCoord, this.fractalSettingsService.increment);
-    this.fractalSettingsService.center = coord;
-    this.fractalSettingsService.zoom = this.fractalSettingsService.zoom * this.fractalSettingsService.zoomFactor;
-    this.fractalSettingsService.updated.emit();
+    this.fractalSettingsService.zoomOnCoord(coord);
   }
 
   hoverLocation($event: MouseEvent): void {

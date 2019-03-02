@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
@@ -24,6 +25,7 @@ import { FractalViewerComponent } from './fractal-viewer/fractal-viewer.componen
 import { FractalSettingsService } from './services/fractal-settings.service';
 import { KeysPipe } from './services/keys.pipe';
 import { ResolutionModalComponent } from './resolution-modal/resolution-modal.component';
+import { FractalUrlService } from './services/fractal-url.service';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,7 @@ import { ResolutionModalComponent } from './resolution-modal/resolution-modal.co
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
+    RouterModule.forRoot([]),
 
     MatButtonModule,
     MatCardModule,
@@ -58,6 +61,7 @@ import { ResolutionModalComponent } from './resolution-modal/resolution-modal.co
     MatProgressSpinnerModule,
   ],
   providers: [
+    FractalUrlService,
     FractalSettingsService,
   ],
   bootstrap: [AppComponent]

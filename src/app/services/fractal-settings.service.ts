@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Coordinate } from 'worker/app-workers/shared/coordinate';
 
 import { MandelbrotSetParams } from '../../../worker/app-workers/fractals/mandelbrot-set-params';
@@ -7,7 +7,9 @@ import { Point } from '../../../worker/app-workers/shared/point';
 import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
 import { ColorScheme } from '../color-schemes/color-scheme.interface';
+import { FractalUrlService } from './fractal-url.service';
 
+@Injectable()
 export class FractalSettingsService {
   private defaultPixelSize = 0.005;
   updated = new EventEmitter();
@@ -28,12 +30,17 @@ export class FractalSettingsService {
   center = new Coordinate(0, 0);
   fractalParams: FractalParams = new MandelbrotSetParams(100, 2);
 
-  constructor() {
+  constructor(private fractalUrlService: FractalUrlService) {
     const previousState = localStorage.getItem('fractalState');
 
     if (previousState) {
       Object.assign(this, JSON.parse(previousState, this.jsonReviver));
     }
+
+    fractalUrlService.newUrlSettings.subscribe(settingsString => {
+      Object.assign(this, JSON.parse(settingsString, this.jsonReviver));
+      this.updateStorage();
+    });
   }
 
   setSettings(
@@ -59,6 +66,12 @@ export class FractalSettingsService {
     this.updateStorage();
   }
 
+  zoomOnCoord(coord: Coordinate): void {
+    this.center = coord;
+    this.zoom = this.zoom * this.zoomFactor;
+    this.updateStorage();
+  }
+
   resetAll(): void {
     this.zoomFactor = 2;
     this.colorScheme = ColorSchemeFactory.create(ColorSchemeType.Greenscale);
@@ -70,8 +83,10 @@ export class FractalSettingsService {
   }
 
   private updateStorage(): void {
+    const stringifiedSettings = JSON.stringify(this, this.jsonReplacer);
     localStorage.setItem('fractalState', JSON.stringify(this, this.jsonReplacer));
     this.updated.emit();
+    this.fractalUrlService.updateUrl(stringifiedSettings);
   }
 
   private jsonReviver(key: string, value: any): any {
@@ -80,7 +95,9 @@ export class FractalSettingsService {
     return value;
   }
 
+  // TODO: settings should be separate model
   private jsonReplacer(key: string, value: any): any {
+    if (key === 'fractalUrlService') { return undefined; }
     if (key === 'increment') { return undefined; }
     if (key === 'updated') { return undefined; }
     if (key === 'dimensions') { return undefined; }

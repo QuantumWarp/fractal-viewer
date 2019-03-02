@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 import { Coordinate } from 'worker/app-workers/shared/coordinate';
-
-import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
 import { FractalType } from '../../../worker/app-workers/fractals/shared/fractal-type.enum';
 import { Point } from '../../../worker/app-workers/shared/point';
 import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
 import { FractalImageLoader } from '../fractal-canvas/fractal-image-loader';
-import { FractalSettingsService } from '../services/fractal-settings.service';
-import { MatDialog } from '@angular/material';
 import { ResolutionModalComponent } from '../resolution-modal/resolution-modal.component';
+import { FractalSettingsService } from '../services/fractal-settings.service';
+
 
 @Component({
   selector: 'app-fractal-settings',
