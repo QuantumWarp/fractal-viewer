@@ -13,6 +13,7 @@ export class MandelbrotSet implements Fractal<MandelbrotSetParams> {
     while (count < this.params.maxIterations) {
       coord = this.iterate(coord, initialCoord);
 
+      // If the calculation exceeds the bounds return the iterations that were required to get there
       if (!this.checkIsBounded(coord)) {
         return count;
       }
@@ -20,15 +21,18 @@ export class MandelbrotSet implements Fractal<MandelbrotSetParams> {
       count++;
     }
 
+    // Undefined is returned to represent the calculation never exeeded the bounds
     return undefined;
   }
 
+  // Checks if the coordinate exceeds the allowed bounding value
   private checkIsBounded(coord: Coordinate): boolean {
     // Find the absolute value
     const value = (coord.x * coord.x) + (coord.y * coord.y);
     return value < (this.params.bound * this.params.bound);
   }
 
+  // Single iteration of the fractal calculation process
   private iterate(coord: Coordinate, initialCoord: Coordinate): Coordinate {
     const x = coord.x;
     const y = coord.y;
