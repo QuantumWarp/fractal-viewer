@@ -1,8 +1,8 @@
 import { fromEvent, Observable, Subject, Subscription } from 'rxjs';
-import { ProcessFractalResults } from 'worker/app-workers/messages/process-fractal-results';
-import { WorkerMessageType } from 'worker/app-workers/messages/worker-message.enum';
+import { ProcessFractalResults } from '../../worker/app-workers/messages/process-fractal-results';
+import { WorkerMessageType } from '../../worker/app-workers/messages/worker-message.enum';
 
-import { ProcessFractalStart } from '../../../worker/app-workers/messages/process-fractal-start';
+import { ProcessFractalStart } from '../../worker/app-workers/messages/process-fractal-start';
 
 export class FractalWorker {
   public readonly workerPath = 'assets/workers/main.js';
@@ -16,7 +16,7 @@ export class FractalWorker {
   private workerMessageSubscription: Subscription;
 
   constructor() {
-    this.worker = new Worker(this.workerPath);
+    this.worker = new Worker('../../worker/main.worker', { type: 'module' });
 
     this.doneSubject = new Subject<boolean>();
     this.doneUpdate$ = this.doneSubject.asObservable();

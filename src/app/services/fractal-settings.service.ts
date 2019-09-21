@@ -1,9 +1,9 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { Coordinate } from 'worker/app-workers/shared/coordinate';
+import { Coordinate } from '../../worker/app-workers/shared/coordinate';
 
-import { MandelbrotSetParams } from '../../../worker/app-workers/fractals/mandelbrot-set-params';
-import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
-import { Point } from '../../../worker/app-workers/shared/point';
+import { MandelbrotSetParams } from '../../worker/app-workers/fractals/mandelbrot-set-params';
+import { FractalParams } from '../../worker/app-workers/fractals/shared/fractal-params.interface';
+import { Point } from '../../worker/app-workers/shared/point';
 import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
 import { ColorSchemeType } from '../color-schemes/color-scheme-type.enum';
 import { ColorScheme } from '../color-schemes/color-scheme.interface';

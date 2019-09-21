@@ -1,8 +1,8 @@
-import { FractalParams } from '../../../worker/app-workers/fractals/shared/fractal-params.interface';
-import { ProcessFractalStart } from '../../../worker/app-workers/messages/process-fractal-start';
-import { ComputedPoint } from '../../../worker/app-workers/shared/computed-point';
-import { Coordinate } from '../../../worker/app-workers/shared/coordinate';
-import { Point } from '../../../worker/app-workers/shared/point';
+import { FractalParams } from '../../worker/app-workers/fractals/shared/fractal-params.interface';
+import { ProcessFractalStart } from '../../worker/app-workers/messages/process-fractal-start';
+import { ComputedPoint } from '../../worker/app-workers/shared/computed-point';
+import { Coordinate } from '../../worker/app-workers/shared/coordinate';
+import { Point } from '../../worker/app-workers/shared/point';
 import { ColorScheme } from '../color-schemes/color-scheme.interface';
 import { FractalWorker } from '../services/fractal-worker';
 
