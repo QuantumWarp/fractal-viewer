@@ -9,6 +9,12 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead"
+  ],
   "private": true,
   "dependencies": {
     "@angular/animations": "^8.2.7",
@@ -32,19 +38,7 @@
     "@angular/cli": "~8.3.5",
     "@angular/compiler-cli": "^8.2.7",
     "@angular/language-service": "^8.2.7",
-    "@types/jasmine": "^2.8.16",
-    "@types/jasminewd2": "^2.0.6",
     "@types/node": "~8.9.4",
-    "codelyzer": "~4.2.1",
-    "concurrently": "^4.1.0",
-    "jasmine-core": "~2.99.1",
-    "jasmine-spec-reporter": "~4.2.1",
-    "karma": "~1.7.1",
-    "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "^2.0.5",
-    "karma-jasmine": "~1.1.1",
-    "karma-jasmine-html-reporter": "^0.2.2",
-    "protractor": "~5.3.0",
     "ts-node": "~5.0.1",
     "tslint": "~5.9.1",
     "typescript": "~3.5.0"
