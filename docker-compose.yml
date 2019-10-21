@@ -1,5 +1,11 @@
-version: '3'
+version: '3.7'
 services:
   web:
     container_name: 'fractal-viewer'
     build: .
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    name: proxy
