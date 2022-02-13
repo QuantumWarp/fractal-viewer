@@ -6,6 +6,10 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./about.component.scss'],
 })
 export class AboutComponent {
+  get thisYear(): number {
+    return new Date().getFullYear();
+  }
+
   constructor(private dialogRef: MatDialogRef<AboutComponent>) { }
 
   close(): void {

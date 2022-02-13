@@ -20,6 +20,11 @@ export class FractalSettingsBarComponent {
 
   downloading = false;
 
+  get typeName(): string {
+    const name = this.fractalTypes[this.fractalSettingsService.fractalParams.type];
+    return name.replace(/([A-Z])/g, ' $1').trim();
+  }
+
   constructor(
     public fractalSettingsService: FractalSettingsService,
     private dialog: MatDialog,
