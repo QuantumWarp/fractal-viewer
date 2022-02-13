@@ -2,6 +2,7 @@
 
 # specific paths
 /src/assets/workers
+.angular/
 
 # compiled output
 /dist

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Coordinate } from '../../worker/app-workers/shared/coordinate';
 import { FractalType } from '../../worker/app-workers/fractals/shared/fractal-type.enum';
 import { Point } from '../../worker/app-workers/shared/point';

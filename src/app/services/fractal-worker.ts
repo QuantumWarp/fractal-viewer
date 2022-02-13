@@ -16,7 +16,7 @@ export class FractalWorker {
   private workerMessageSubscription: Subscription;
 
   constructor() {
-    this.worker = new Worker('../../worker/main.worker', { type: 'module' });
+    this.worker = new Worker(new URL('../../worker/main.worker', import.meta.url));
 
     this.doneSubject = new Subject<boolean>();
     this.doneUpdate$ = this.doneSubject.asObservable();
