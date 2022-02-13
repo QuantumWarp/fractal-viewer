@@ -18,12 +18,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AboutComponent } from './about/about.component';
 import { AppComponent } from './app.component';
 import { FractalCanvasComponent } from './fractal-canvas/fractal-canvas.component';
-import { FractalSettingsComponent } from './fractal-settings/fractal-settings.component';
+import { FractalSettingsModalComponent } from './fractal-settings-modal/fractal-settings-modal.component';
 import { FractalViewerComponent } from './fractal-viewer/fractal-viewer.component';
 import { FractalSettingsService } from './services/fractal-settings.service';
 import { KeysPipe } from './services/keys.pipe';
 import { ResolutionModalComponent } from './resolution-modal/resolution-modal.component';
 import { FractalUrlService } from './services/fractal-url.service';
+import { FractalSettingsBarComponent } from './fractal-settings-bar/fractal-settings-bar.component';
 
 @NgModule({
   declarations: [
@@ -31,13 +32,15 @@ import { FractalUrlService } from './services/fractal-url.service';
     AboutComponent,
     FractalViewerComponent,
     FractalCanvasComponent,
-    FractalSettingsComponent,
+    FractalSettingsModalComponent,
+    FractalSettingsBarComponent,
     ResolutionModalComponent,
     KeysPipe,
   ],
   entryComponents: [
     AboutComponent,
     ResolutionModalComponent,
+    FractalSettingsModalComponent,
   ],
   imports: [
     FormsModule,

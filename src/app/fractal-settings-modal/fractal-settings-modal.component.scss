@@ -1,0 +1,32 @@
+:host {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px 10px;
+
+  > * {
+    flex: 1 0 34%;
+    margin: 0px 10px;
+    max-width: 50%;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

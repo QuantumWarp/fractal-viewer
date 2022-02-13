@@ -1,0 +1,26 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.type {
+  font-size: 25px;
+  margin-right: 50px;
+}
+
+.value {
+  margin-left: 10px;
+  margin-right: 50px;
+}

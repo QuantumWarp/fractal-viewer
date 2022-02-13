@@ -1,0 +1,33 @@
+<mat-card>
+  <div class="info">
+    <div class="type"><b>{{ fractalTypes[fractalSettingsService.fractalParams.type] }}</b></div>
+
+    <div><b>Center:</b></div>
+    <div class="value">
+      <div>{{ fractalSettingsService.center.x }}</div>
+      <div>{{ fractalSettingsService.center.y }}</div>
+    </div>
+
+    <div><b>Zoom:</b></div>
+    <div class="value">{{ fractalSettingsService.zoom }}</div>
+  </div>
+
+  <div>
+    <button mat-button (click)="fractalSettingsService.resetZoom()">
+      <mat-icon>youtube_searched_for</mat-icon>
+    </button>
+  
+    <button mat-button (click)="fractalSettingsService.resetAll()">
+      <mat-icon>replay</mat-icon>
+    </button>
+
+    <button mat-button (click)="settings()">
+      <mat-icon>settings</mat-icon>
+    </button>
+  
+    <button mat-button (click)="download()" [disabled]="downloading">
+      <mat-icon *ngIf="!downloading">download</mat-icon>
+      <mat-spinner *ngIf="downloading" strokeWidth="3" diameter="20"></mat-spinner>
+    </button>
+  </div>
+</mat-card>

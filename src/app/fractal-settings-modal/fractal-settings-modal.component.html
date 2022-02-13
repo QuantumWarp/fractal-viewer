@@ -1,0 +1,55 @@
+<mat-toolbar>Settings</mat-toolbar>
+
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-select placeholder="Fractal Type" formControlName="fractalType">
+      <mat-option *ngFor="let fractalType of fractalTypes | keys" [value]="fractalType.key">{{ fractalType.value }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select placeholder="Color Scheme" formControlName="colorScheme">
+      <mat-option *ngFor="let colorScheme of colorSchemes | keys" [value]="colorScheme.key">{{ colorScheme.value }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Zoom" formControlName="zoom" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Zoom Factor" formControlName="zoomFactor"
+      matTooltip="This specifies how much clicking will zoom in." type="number" required />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Center X" formControlName="centerX" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Center Y" formControlName="centerY" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Bound" formControlName="bound" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Max Iterations" formControlName="maxIterations" type="number" required
+      matTooltip="This specifies how many iterations are performed to check if the bound value is exceeded." />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Min Color Value" formControlName="minColorValue" type="number" required
+      matTooltip="This can be used when very zoomed in to spread the color over a smaller range of values."/>
+  </mat-form-field>
+</form>
+
+
+<mat-toolbar class="action-buttons">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button (click)="applySettings()" mat-raised-button color="primary" [disabled]="!form.valid"
+    matTooltip="Note: This does not scale the current image. A new fractal will be calculated with the current settings but with the specified dimensions.">
+    Confirm
+  </button>
+</mat-toolbar>

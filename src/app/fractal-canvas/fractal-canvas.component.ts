@@ -8,7 +8,7 @@ import {
   ViewChild,
   OnDestroy,
 } from '@angular/core';
-import { debounceTime, map, Subject } from 'rxjs';
+import { debounceTime, Subject } from 'rxjs';
 
 import { Point } from '../../worker/app-workers/shared/point';
 import { Coordinate } from '../../worker/app-workers/shared/coordinate';
@@ -40,15 +40,10 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
     this.context = (<HTMLCanvasElement> this.myCanvas.nativeElement).getContext('2d');
 
     // Redraw on resize
-    this.resize$.pipe(
-      debounceTime(500),
-      map(() => this.updateDimensions()),
-    ).subscribe((triggerProcessing) => {
-      if (!triggerProcessing) { return; }
-      this.runProcessing();
-    });
+    this.resize$
+      .pipe(debounceTime(500))
+      .subscribe(() => this.runProcessing());
 
-    this.updateDimensions();
     requestAnimationFrame(() => this.paint());
 
     this.fractalSettingsService.updated.subscribe(() => this.runProcessing());
@@ -61,6 +56,14 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
 
   runProcessing(): void {
     if (this.fractalImageLoader) { this.fractalImageLoader.cancel(); }
+
+    const rect = this.myCanvas.nativeElement.parentNode.getBoundingClientRect();
+
+    this.myCanvas.nativeElement.width = rect.width;
+    this.myCanvas.nativeElement.height = rect.height;
+
+    this.fractalSettingsService.dimensions = new Point(rect.width, rect.height);
+
     this.fractalImageLoader = new FractalImageLoader(
       this.fractalSettingsService.center,
       this.fractalSettingsService.increment,
@@ -93,24 +96,10 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
     this.hoverLocationChanged.emit(coord);
   }
 
-  // TODO: Canvas should resize properly
-  private updateDimensions(): boolean {
-    this.fractalSettingsService.dimensions = new Point(
-      this.context.canvas.offsetWidth,
-      this.context.canvas.offsetHeight,
-    );
-
-    const shouldTriggerResize = this.myCanvas.nativeElement.width
-      !== this.fractalSettingsService.dimensions.x;
-
-    this.myCanvas.nativeElement.width = this.fractalSettingsService.dimensions.x;
-    this.myCanvas.nativeElement.height = this.fractalSettingsService.dimensions.y;
-
-    return shouldTriggerResize;
-  }
-
   private paint(): void {
-    this.context.putImageData(this.fractalImageLoader.imageData, 0, 0);
+    if (this.fractalImageLoader) {
+      this.context.putImageData(this.fractalImageLoader.imageData, 0, 0);
+    }
     requestAnimationFrame(() => this.paint());
   }
 }
