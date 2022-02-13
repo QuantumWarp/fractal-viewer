@@ -5,8 +5,8 @@ import { ComputedPoint } from '../shared/computed-point';
 import { Coordinate } from '../shared/coordinate';
 import { Point } from '../shared/point';
 
-export class FractalProcessor {
-  private computedCoords: ComputedPoint[] = [];
+export abstract class FractalProcessor {
+  protected computedCoords: ComputedPoint[] = [];
 
   private fractal: Fractal<any>;
 
@@ -23,60 +23,38 @@ export class FractalProcessor {
     let count = 0;
 
     while (point) {
-      // Find the x, y coordinate from the pixel point coordinate
-      const coord = Coordinate.fromPoint(point, this.params.topLeftCoord, this.params.increment);
+      if (this.validPoint(point)) {
+        // Find the x, y coordinate from the pixel point coordinate
+        const coord = Coordinate.fromPoint(point, this.params.topLeftCoord, this.params.increment);
 
-      const iterations = this.fractal.calculate(coord);
-      this.computedCoords.push(new ComputedPoint(point, iterations));
+        const iterations = this.fractal.calculate(coord);
+        this.computedCoords.push(new ComputedPoint(point, iterations));
 
-      this.checkEmitResults(count, resultCallback);
+        this.checkEmitResults(count, resultCallback, false);
 
-      count += 1;
+        count += 1;
+      }
+
       point = this.nextPoint(point);
     }
 
     this.checkEmitResults(count, resultCallback, true);
   }
 
+  validPoint(point: Point): boolean {
+    return point.x >= 0
+      && point.x < this.params.dimensions.x
+      && point.y >= 0
+      && point.y < this.params.dimensions.y;
+  }
+
   // Emits results every row
-  private checkEmitResults(
+  abstract checkEmitResults(
     count: number,
     resultCallback: (points: ComputedPoint[]) => void,
-    force: boolean = false,
-  ): void {
-    if (!force && count % this.params.dimensions.y !== 0) { return; }
-
-    resultCallback(this.computedCoords);
-    this.computedCoords = [];
-  }
+    force: boolean,
+  ): void;
 
   // Method to determine which point should be processed next
-  private nextPoint(point?: Point): Point | undefined {
-    const midway = Math.floor(this.params.dimensions.x / 2);
-
-    if (!point) {
-      // Initial point
-      return new Point(midway, 0);
-    }
-
-    // If not at the end of the column increment the y coordinate
-    if (point.y !== this.params.dimensions.y - 1) {
-      return new Point(point.x, point.y + 1);
-    }
-
-    // Since we are at the end of the column determine which column is next
-    let newX: number;
-    if (point.x >= midway) {
-      newX = 2 * midway - point.x - 1;
-    } else {
-      newX = 2 * midway - point.x;
-    }
-
-    // If new column is not out of bounds we return the first y coord in that column
-    if (newX !== -1 && newX !== this.params.dimensions.x) {
-      return new Point(newX, 0);
-    }
-
-    return undefined;
-  }
+  abstract nextPoint(point?: Point): Point | undefined;
 }

@@ -1,4 +1,4 @@
-import { FractalProcessor } from './fractal-processers/fractal-processor';
+import { FractalProcessorSquare } from './fractal-processers/fractal-processor-square';
 import { ProcessFractalDone } from './messages/process-fractal-done';
 import { ProcessFractalResults } from './messages/process-fractal-results';
 import { ProcessFractalStart } from './messages/process-fractal-start';
@@ -20,7 +20,7 @@ export class AppWorkers {
   }
 
   startProcessor(params: ProcessFractalStart): void {
-    const processor = new FractalProcessor(params);
+    const processor = new FractalProcessorSquare(params);
     processor.process((coords) => this.workerCtx.postMessage(new ProcessFractalResults(coords)));
     this.workerCtx.postMessage(new ProcessFractalDone());
   }
