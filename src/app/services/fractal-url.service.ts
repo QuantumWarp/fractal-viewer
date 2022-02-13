@@ -4,6 +4,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 @Injectable()
 export class FractalUrlService {
   private static settingsUrlKey = 'settings';
+
   private urlSettings: string;
 
   newUrlSettings = new EventEmitter<string>();
@@ -28,7 +29,7 @@ export class FractalUrlService {
 
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
-      queryParams: queryParams,
+      queryParams,
       queryParamsHandling: 'merge',
     });
   }

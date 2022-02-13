@@ -12,6 +12,7 @@ import { FractalUrlService } from './fractal-url.service';
 @Injectable()
 export class FractalSettingsService {
   private defaultPixelSize = 0.005;
+
   updated = new EventEmitter();
 
   get increment(): number {
@@ -24,10 +25,13 @@ export class FractalSettingsService {
   zoomFactor = 2;
 
   colorScheme = ColorSchemeFactory.create(ColorSchemeType.Greenscale);
+
   minColorValue = 0;
 
   zoom = 1;
+
   center = new Coordinate(0, 0);
+
   fractalParams: FractalParams = new MandelbrotSetParams(100, 2);
 
   constructor(private fractalUrlService: FractalUrlService) {
@@ -37,7 +41,7 @@ export class FractalSettingsService {
       Object.assign(this, JSON.parse(previousState, this.jsonReviver));
     }
 
-    fractalUrlService.newUrlSettings.subscribe(settingsString => {
+    fractalUrlService.newUrlSettings.subscribe((settingsString) => {
       Object.assign(this, JSON.parse(settingsString, this.jsonReviver));
       this.updateStorage();
     });
@@ -68,7 +72,7 @@ export class FractalSettingsService {
 
   zoomOnCoord(coord: Coordinate): void {
     this.center = coord;
-    this.zoom = this.zoom * this.zoomFactor;
+    this.zoom *= this.zoomFactor;
     this.updateStorage();
   }
 

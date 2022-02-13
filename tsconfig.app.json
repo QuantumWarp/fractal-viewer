@@ -6,6 +6,6 @@
     "types": []
   },
   "exclude": [
-    "**/*.worker.ts"
+    "./src/**/*.worker.ts"
   ]
 }

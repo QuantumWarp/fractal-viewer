@@ -3,10 +3,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './about.component.html',
-  styleUrls: ['./about.component.scss']
+  styleUrls: ['./about.component.scss'],
 })
 export class AboutComponent {
-
   constructor(private dialogRef: MatDialogRef<AboutComponent>) { }
 
   close(): void {

@@ -2,18 +2,21 @@ import { FractalFactory } from '../fractals/shared/fractal-factory';
 import { Fractal } from '../fractals/shared/fractal.interface';
 import { ProcessFractalStart } from '../messages/process-fractal-start';
 import { ComputedPoint } from '../shared/computed-point';
+import { Coordinate } from '../shared/coordinate';
 import { Point } from '../shared/point';
 
 export class FractalProcessor {
   private computedCoords: ComputedPoint[] = [];
+
   private fractal: Fractal<any>;
 
   constructor(
-    public params: ProcessFractalStart) {
+    public params: ProcessFractalStart,
+  ) {
     this.fractal = FractalFactory.create(params.fractalParams);
   }
 
-  // Uses callback rather than EventEmitter to avoid having to use any dependencies in the Web Worker
+  // Uses callback rather than EventEmitter to avoid using any dependencies in the Web Worker
   // Calculates and batches the results together
   process(resultCallback: (points: ComputedPoint[]) => void): void {
     let point = this.nextPoint();
@@ -21,14 +24,14 @@ export class FractalProcessor {
 
     while (point) {
       // Find the x, y coordinate from the pixel point coordinate
-      const coord = point.toCoordinate(this.params.topLeftCoord, this.params.increment);
+      const coord = Coordinate.fromPoint(point, this.params.topLeftCoord, this.params.increment);
 
       const iterations = this.fractal.calculate(coord);
       this.computedCoords.push(new ComputedPoint(point, iterations));
 
       this.checkEmitResults(count, resultCallback);
 
-      count++;
+      count += 1;
       point = this.nextPoint(point);
     }
 
@@ -36,7 +39,11 @@ export class FractalProcessor {
   }
 
   // Emits results every row
-  private checkEmitResults(count: number, resultCallback: (points: ComputedPoint[]) => void, force: boolean = false): void {
+  private checkEmitResults(
+    count: number,
+    resultCallback: (points: ComputedPoint[]) => void,
+    force: boolean = false,
+  ): void {
     if (!force && count % this.params.dimensions.y !== 0) { return; }
 
     resultCallback(this.computedCoords);

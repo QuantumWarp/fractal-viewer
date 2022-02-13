@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "plugin:@angular-eslint/recommended",
+    "airbnb",
+    "airbnb-typescript",
+    "plugin:import/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": [
+      "./tsconfig.app.json",
+      "./tsconfig.worker.json"
+    ]
+  },
+  "rules": {
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off"
+  }
+}

@@ -1,4 +1,9 @@
-import { fromEvent, Observable, Subject, Subscription } from 'rxjs';
+import {
+  fromEvent,
+  Observable,
+  Subject,
+  Subscription,
+} from 'rxjs';
 import { ProcessFractalResults } from '../../worker/app-workers/messages/process-fractal-results';
 import { WorkerMessageType } from '../../worker/app-workers/messages/worker-message.enum';
 
@@ -8,11 +13,15 @@ export class FractalWorker {
   public readonly workerPath = 'assets/workers/main.js';
 
   doneUpdate$: Observable<boolean>;
+
   resultsUpdate$: Observable<ProcessFractalResults>;
 
   private worker: Worker;
+
   private doneSubject: Subject<boolean>;
+
   private resultsSubject: Subject<ProcessFractalResults>;
+
   private workerMessageSubscription: Subscription;
 
   constructor() {

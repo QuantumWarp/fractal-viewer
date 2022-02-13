@@ -62,6 +62,6 @@ import { FractalUrlService } from './services/fractal-url.service';
     FractalUrlService,
     FractalSettingsService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

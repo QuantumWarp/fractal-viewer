@@ -10,35 +10,37 @@ import { FractalImageLoader } from '../fractal-canvas/fractal-image-loader';
 import { ResolutionModalComponent } from '../resolution-modal/resolution-modal.component';
 import { FractalSettingsService } from '../services/fractal-settings.service';
 
-
 @Component({
   selector: 'app-fractal-settings',
   templateUrl: './fractal-settings.component.html',
-  styleUrls: ['./fractal-settings.component.scss']
+  styleUrls: ['./fractal-settings.component.scss'],
 })
 export class FractalSettingsComponent implements OnInit {
   fractalTypes = FractalType;
+
   colorSchemes = ColorSchemeType;
 
   downloading = false;
+
   form: FormGroup;
 
   constructor(
     public fractalSettingsService: FractalSettingsService,
     private dialog: MatDialog,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder,
+  ) { }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      fractalType: [, ],
-      zoom: [, ],
-      zoomFactor: [, ],
-      centerX: [, ],
-      centerY: [, ],
-      bound: [, ],
-      maxIterations: [, ],
-      colorScheme: [, ],
-      minColorValue: [, ],
+      fractalType: [],
+      zoom: [],
+      zoomFactor: [],
+      centerX: [],
+      centerY: [],
+      bound: [],
+      maxIterations: [],
+      colorScheme: [],
+      minColorValue: [],
     });
     this.patchForm();
 
@@ -65,18 +67,18 @@ export class FractalSettingsComponent implements OnInit {
       this.form.value.zoom,
       new Coordinate(
         this.form.value.centerX,
-        this.form.value.centerY
+        this.form.value.centerY,
       ),
       {
         type: this.form.value.fractalType,
         maxIterations: this.form.value.maxIterations,
-        bound: this.form.value.bound
+        bound: this.form.value.bound,
       },
     );
   }
 
   download(): void {
-    this.dialog.open(ResolutionModalComponent).afterClosed().subscribe(dimensions => {
+    this.dialog.open(ResolutionModalComponent).afterClosed().subscribe((dimensions) => {
       if (!dimensions) { return; }
       this.downloadWithDimensions(dimensions.width, dimensions.height);
     });
@@ -91,7 +93,8 @@ export class FractalSettingsComponent implements OnInit {
       new Point(width, height),
       this.fractalSettingsService.fractalParams,
       this.fractalSettingsService.minColorValue,
-      this.fractalSettingsService.colorScheme);
+      this.fractalSettingsService.colorScheme,
+    );
 
     downloader.worker.doneUpdate$.subscribe(() => {
       const canvas = document.createElement('canvas');
@@ -99,7 +102,7 @@ export class FractalSettingsComponent implements OnInit {
       canvas.height = height;
 
       canvas.getContext('2d').putImageData(downloader.imageData, 0, 0);
-      canvas.toBlob(blob => this.saveBlob(blob, 'fractal'));
+      canvas.toBlob((blob) => this.saveBlob(blob, 'fractal'));
     });
   }
 

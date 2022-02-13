@@ -5,7 +5,6 @@ import { ProcessFractalStart } from './messages/process-fractal-start';
 import { WorkerMessageType } from './messages/worker-message.enum';
 
 export class AppWorkers {
-
   constructor(public workerCtx: any) { }
 
   workerBroker($event: any): void {
@@ -22,8 +21,7 @@ export class AppWorkers {
 
   startProcessor(params: ProcessFractalStart): void {
     const processor = new FractalProcessor(params);
-    processor.process((coords) =>
-      this.workerCtx.postMessage(new ProcessFractalResults(coords)));
+    processor.process((coords) => this.workerCtx.postMessage(new ProcessFractalResults(coords)));
     this.workerCtx.postMessage(new ProcessFractalDone());
   }
 }

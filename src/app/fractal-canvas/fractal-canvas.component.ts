@@ -1,38 +1,49 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild, OnDestroy } from '@angular/core';
-import { Point } from '../../worker/app-workers/shared/point';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Output,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core';
+import { debounceTime, map, Subject } from 'rxjs';
 
+import { Point } from '../../worker/app-workers/shared/point';
 import { Coordinate } from '../../worker/app-workers/shared/coordinate';
 import { FractalSettingsService } from '../services/fractal-settings.service';
 import { FractalImageLoader } from './fractal-image-loader';
-import { Subject } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-fractal-canvas',
   templateUrl: './fractal-canvas.component.html',
-  styleUrls: ['./fractal-canvas.component.scss']
+  styleUrls: ['./fractal-canvas.component.scss'],
 })
 export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
   @Output() hoverLocationChanged = new EventEmitter<Coordinate>();
+
   @ViewChild('myCanvas', { static: false }) myCanvas: ElementRef;
 
   resize$ = new Subject();
 
   private context: CanvasRenderingContext2D;
+
   private fractalImageLoader: FractalImageLoader;
 
   constructor(
     public cdr: ChangeDetectorRef,
-    public fractalSettingsService: FractalSettingsService) { }
+    public fractalSettingsService: FractalSettingsService,
+  ) { }
 
   ngAfterViewInit(): void {
-    this.context = (<HTMLCanvasElement>this.myCanvas.nativeElement).getContext('2d');
+    this.context = (<HTMLCanvasElement> this.myCanvas.nativeElement).getContext('2d');
 
     // Redraw on resize
     this.resize$.pipe(
       debounceTime(500),
-      map(() => this.updateDimensions())
-    ).subscribe(triggerProcessing => {
+      map(() => this.updateDimensions()),
+    ).subscribe((triggerProcessing) => {
       if (!triggerProcessing) { return; }
       this.runProcessing();
     });
@@ -56,30 +67,43 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
       this.fractalSettingsService.dimensions,
       this.fractalSettingsService.fractalParams,
       this.fractalSettingsService.minColorValue,
-      this.fractalSettingsService.colorScheme);
+      this.fractalSettingsService.colorScheme,
+    );
   }
 
   pointClicked($event: MouseEvent): void {
     if (!this.fractalImageLoader) { return; }
     const point = new Point($event.offsetX, $event.offsetY);
-    const coord = point.toCoordinate(this.fractalImageLoader.topLeftCoord, this.fractalSettingsService.increment);
+    const coord = Coordinate.fromPoint(
+      point,
+      this.fractalImageLoader.topLeftCoord,
+      this.fractalSettingsService.increment,
+    );
     this.fractalSettingsService.zoomOnCoord(coord);
   }
 
   hoverLocation($event: MouseEvent): void {
     if (!this.fractalImageLoader) { return; }
     const point = new Point($event.offsetX, $event.offsetY);
-    const coord = point.toCoordinate(this.fractalImageLoader.topLeftCoord, this.fractalSettingsService.increment);
+    const coord = Coordinate.fromPoint(
+      point,
+      this.fractalImageLoader.topLeftCoord,
+      this.fractalSettingsService.increment,
+    );
     this.hoverLocationChanged.emit(coord);
   }
 
   // TODO: Canvas should resize properly
   private updateDimensions(): boolean {
-    this.fractalSettingsService.dimensions = new Point(this.context.canvas.offsetWidth, this.context.canvas.offsetHeight);
+    this.fractalSettingsService.dimensions = new Point(
+      this.context.canvas.offsetWidth,
+      this.context.canvas.offsetHeight,
+    );
 
-    const shouldTriggerResize = this.myCanvas.nativeElement.width !== this.fractalSettingsService.dimensions.x;
+    const shouldTriggerResize = this.myCanvas.nativeElement.width
+      !== this.fractalSettingsService.dimensions.x;
 
-    this.myCanvas.nativeElement.width  = this.fractalSettingsService.dimensions.x;
+    this.myCanvas.nativeElement.width = this.fractalSettingsService.dimensions.x;
     this.myCanvas.nativeElement.height = this.fractalSettingsService.dimensions.y;
 
     return shouldTriggerResize;
