@@ -1,4 +1,4 @@
-<canvas #myCanvas (window:resize)="resize$.next()"
+<canvas #myCanvas (window:resize)="resize$.next(null)"
   (click)="pointClicked($event)"
   (mousemove)="hoverLocation($event)">
 </canvas>

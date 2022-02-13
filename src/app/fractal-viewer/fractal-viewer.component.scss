@@ -39,23 +39,17 @@ mat-toolbar {
   flex-direction: column;
 
   > .main-content {
+    padding: 10px;
     flex: 1;
     display: flex;
-    flex-wrap: wrap-reverse;
-    padding: 10px;
-
-    > app-fractal-settings {
-      flex: 2;
-      display: flex;
-      margin: 10px;
-    }
+    flex-direction: column;
 
     > .fractal-display {
-      flex: 5;
-      min-height: 84vh;
-      margin: 10px;
-      padding: 10px;
+      flex: 1;
+      margin-top: 10px;
       display: flex;
+      padding: 0;
+      overflow: hidden;
     }
   }
 }

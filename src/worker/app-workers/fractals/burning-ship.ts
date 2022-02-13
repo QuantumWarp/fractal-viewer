@@ -3,7 +3,6 @@ import { BurningShipParams } from './burning-ship-params';
 import { Fractal } from './shared/fractal.interface';
 
 export class BurningShip implements Fractal<BurningShipParams> {
-
   constructor(public params: BurningShipParams) { }
 
   calculate(initialCoord: Coordinate): number | undefined {
@@ -17,7 +16,7 @@ export class BurningShip implements Fractal<BurningShipParams> {
         return count;
       }
 
-      count++;
+      count += 1;
     }
 
     return undefined;
@@ -34,13 +33,15 @@ export class BurningShip implements Fractal<BurningShipParams> {
     const y = Math.abs(coord.y);
 
     // Square the current term
-    coord.x = (x * x) - (y * y);
-    coord.y = 2 * x * y;
+    const newCoord = new Coordinate(
+      (x * x) - (y * y),
+      2 * x * y,
+    );
 
     // Add the initial value
-    coord.x = coord.x + initialCoord.x;
-    coord.y = coord.y + initialCoord.y;
+    newCoord.x += initialCoord.x;
+    newCoord.y += initialCoord.y;
 
-    return coord;
+    return newCoord;
   }
 }

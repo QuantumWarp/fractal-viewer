@@ -7,10 +7,10 @@ import { ColorScheme } from '../color-schemes/color-scheme.interface';
 import { FractalWorker } from '../services/fractal-worker';
 
 export class FractalImageLoader {
-
   worker: FractalWorker;
 
   topLeftCoord: Coordinate;
+
   imageData: ImageData;
 
   constructor(
@@ -19,26 +19,26 @@ export class FractalImageLoader {
     public dimensions: Point,
     private fractalParams: FractalParams,
     private minColorValue: number,
-    private colorScheme: ColorScheme
+    private colorScheme: ColorScheme,
   ) {
-
     this.imageData = new ImageData(dimensions.x, dimensions.y);
 
     this.topLeftCoord = center.computeTopLeftCoordinate(
       dimensions,
-      increment
+      increment,
     );
 
     this.worker = new FractalWorker();
 
-    this.worker.resultsUpdate$.subscribe(message =>
-      this.setPixelsOnImageData(message.computedPoints));
+    this.worker.resultsUpdate$.subscribe(
+      (message) => this.setPixelsOnImageData(message.computedPoints),
+    );
 
     this.worker.start(new ProcessFractalStart(
       this.topLeftCoord,
       dimensions,
       increment,
-      fractalParams
+      fractalParams,
     ));
   }
 
@@ -49,17 +49,22 @@ export class FractalImageLoader {
   private setPixelsOnImageData(computedPoints: ComputedPoint[]) {
     const adjustedMaxIterations = this.fractalParams.maxIterations - this.minColorValue;
 
-    computedPoints.forEach(cp => {
+    computedPoints.forEach((cp) => {
       const colorIndices = this.getColorIndicesForPoint(cp.point, this.dimensions.x);
       const [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
 
-      const adjustedValue = cp.value < this.minColorValue ?
-        0 : cp.value - this.minColorValue;
+      const adjustedValue = cp.value < this.minColorValue
+        ? 0
+        : cp.value - this.minColorValue;
 
-      this.imageData.data[redIndex] = this.colorScheme.getRed(adjustedValue, adjustedMaxIterations);
-      this.imageData.data[greenIndex] = this.colorScheme.getGreen(adjustedValue, adjustedMaxIterations);
-      this.imageData.data[blueIndex] = this.colorScheme.getBlue(adjustedValue, adjustedMaxIterations);
-      this.imageData.data[alphaIndex] = this.colorScheme.getAlpha(adjustedValue, adjustedMaxIterations);
+      this.imageData.data[redIndex] = this.colorScheme
+        .getRed(adjustedValue, adjustedMaxIterations);
+      this.imageData.data[greenIndex] = this.colorScheme
+        .getGreen(adjustedValue, adjustedMaxIterations);
+      this.imageData.data[blueIndex] = this.colorScheme
+        .getBlue(adjustedValue, adjustedMaxIterations);
+      this.imageData.data[alphaIndex] = this.colorScheme
+        .getAlpha(adjustedValue, adjustedMaxIterations);
     });
   }
 

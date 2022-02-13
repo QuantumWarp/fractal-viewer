@@ -9,9 +9,7 @@ import { Greyscale } from './schemes/greyscale';
 import { Redscale } from './schemes/redscale';
 
 export class ColorSchemeFactory {
-
   static create(type: ColorSchemeType): ColorScheme {
-
     switch (type) {
       case ColorSchemeType.Greyscale:
         return new Greyscale();
@@ -27,6 +25,8 @@ export class ColorSchemeFactory {
         return new AlternatingMonochrome();
       case ColorSchemeType.AlternatingPrimaryColor:
         return new AlternatingPrimaryColor();
+      default:
+        throw new Error('Color scheme not found');
     }
   }
 }

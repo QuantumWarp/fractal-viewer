@@ -2,7 +2,6 @@ import { ColorScheme } from '../color-scheme.interface';
 import { ColorSchemeType } from '../color-scheme-type.enum';
 
 export class AlternatingPrimaryColor implements ColorScheme {
-
   type = ColorSchemeType.AlternatingPrimaryColor;
 
   getRed(value: number | undefined, maxIterations: number): number {
@@ -20,7 +19,7 @@ export class AlternatingPrimaryColor implements ColorScheme {
     return (maxIterations - value) % 3 === 2 ? 255 : 0;
   }
 
-  getAlpha(value: number | undefined, maxIterations: number): number {
+  getAlpha(): number {
     return 255;
   }
 }

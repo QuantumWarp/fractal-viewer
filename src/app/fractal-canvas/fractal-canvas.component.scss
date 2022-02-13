@@ -1,9 +1,10 @@
 :host {
   flex: 1;
   display: flex;
+  overflow: hidden;
+  position: relative;
 }
 
-:host > canvas {
-  flex: 1 1 0;
-  min-width: 0;
+canvas {
+  position: absolute;
 }
