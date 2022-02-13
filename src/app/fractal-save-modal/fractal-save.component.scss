@@ -1,0 +1,18 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+}
+
+form {
+  padding: 20px;
+
+  > * {
+    width: 100%;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-evenly;
+}

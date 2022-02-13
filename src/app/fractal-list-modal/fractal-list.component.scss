@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  padding: 20px;
+
+  > * {
+    margin: 0px 5px;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-evenly;
+}

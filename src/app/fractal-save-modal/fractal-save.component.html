@@ -1,0 +1,14 @@
+<mat-toolbar>Save Fractal</mat-toolbar>
+
+<form [formGroup]="form">
+  <mat-form-field>
+    <input matInput placeholder="Name" formControlName="name" required />
+  </mat-form-field>
+</form>
+
+<mat-toolbar class="action-buttons">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button mat-dialog-close color="primary" (click)="confirm()">
+    Confirm
+  </button>
+</mat-toolbar>

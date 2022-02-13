@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -25,6 +27,9 @@ import { KeysPipe } from './services/keys.pipe';
 import { ResolutionModalComponent } from './resolution-modal/resolution-modal.component';
 import { FractalUrlService } from './services/fractal-url.service';
 import { FractalSettingsBarComponent } from './fractal-settings-bar/fractal-settings-bar.component';
+import { FractalListComponent } from './fractal-list-modal/fractal-list.component';
+import { FractalSaveComponent } from './fractal-save-modal/fractal-save.component';
+import { FractalListService } from './services/fractal-list.service';
 
 @NgModule({
   declarations: [
@@ -32,6 +37,8 @@ import { FractalSettingsBarComponent } from './fractal-settings-bar/fractal-sett
     AboutComponent,
     FractalViewerComponent,
     FractalCanvasComponent,
+    FractalListComponent,
+    FractalSaveComponent,
     FractalSettingsModalComponent,
     FractalSettingsBarComponent,
     ResolutionModalComponent,
@@ -40,6 +47,8 @@ import { FractalSettingsBarComponent } from './fractal-settings-bar/fractal-sett
   entryComponents: [
     AboutComponent,
     ResolutionModalComponent,
+    FractalListComponent,
+    FractalSaveComponent,
     FractalSettingsModalComponent,
   ],
   imports: [
@@ -50,6 +59,8 @@ import { FractalSettingsBarComponent } from './fractal-settings-bar/fractal-sett
     BrowserAnimationsModule,
     RouterModule.forRoot([]),
 
+    MatMenuModule,
+    MatListModule,
     MatButtonModule,
     MatCardModule,
     MatToolbarModule,
@@ -62,6 +73,7 @@ import { FractalSettingsBarComponent } from './fractal-settings-bar/fractal-sett
     MatProgressSpinnerModule,
   ],
   providers: [
+    FractalListService,
     FractalUrlService,
     FractalSettingsService,
   ],

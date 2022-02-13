@@ -1,0 +1,16 @@
+<mat-toolbar>Fractal List</mat-toolbar>
+
+<mat-action-list>
+  <button
+    *ngFor="let item of fractalListService.items"
+    mat-list-item
+    (click)="save()"
+  >{{ item.name }}</button>
+</mat-action-list>
+
+<mat-toolbar class="action-buttons">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button (click)="confirm()" mat-raised-button color="primary">
+    Confirm
+  </button>
+</mat-toolbar>

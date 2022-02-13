@@ -58,20 +58,18 @@ export class FractalCanvasComponent implements AfterViewInit, OnDestroy {
     if (this.fractalImageLoader) { this.fractalImageLoader.cancel(); }
 
     const rect = this.myCanvas.nativeElement.parentNode.getBoundingClientRect();
-    const point = new Point(Math.floor(rect.width), Math.floor(rect.height));
+    const dimensions = new Point(Math.floor(rect.width), Math.floor(rect.height));
 
-    this.myCanvas.nativeElement.width = point.x;
-    this.myCanvas.nativeElement.height = point.y;
-
-    this.fractalSettingsService.dimensions = point;
+    this.myCanvas.nativeElement.width = dimensions.x;
+    this.myCanvas.nativeElement.height = dimensions.y;
 
     this.fractalImageLoader = new FractalImageLoader(
-      this.fractalSettingsService.center,
+      this.fractalSettingsService.settings.center,
       this.fractalSettingsService.increment,
-      this.fractalSettingsService.dimensions,
-      this.fractalSettingsService.fractalParams,
-      this.fractalSettingsService.minColorValue,
-      this.fractalSettingsService.colorScheme,
+      dimensions,
+      this.fractalSettingsService.settings.params,
+      this.fractalSettingsService.settings.minColorValue,
+      this.fractalSettingsService.settings.colorScheme,
     );
   }
 

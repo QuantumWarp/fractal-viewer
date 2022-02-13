@@ -4,30 +4,53 @@
 
     <div><b>Center:</b></div>
     <div class="value">
-      <div>{{ fractalSettingsService.center.x }}</div>
-      <div>{{ fractalSettingsService.center.y }}</div>
+      <div>{{ fractalSettingsService.settings.center.x }}</div>
+      <div>{{ fractalSettingsService.settings.center.y }}</div>
     </div>
 
     <div><b>Zoom:</b></div>
-    <div class="value">{{ fractalSettingsService.zoom }}</div>
+    <div class="value">{{ fractalSettingsService.settings.zoom }}</div>
   </div>
 
   <div>
-    <button mat-button (click)="fractalSettingsService.resetZoom()">
+    <button mat-button title="Reset Zoom" (click)="fractalSettingsService.resetZoom()">
       <mat-icon>youtube_searched_for</mat-icon>
     </button>
-  
-    <button mat-button (click)="fractalSettingsService.resetAll()">
-      <mat-icon>replay</mat-icon>
-    </button>
 
-    <button mat-button (click)="settings()">
+    <button mat-button title="Settings" (click)="settings()">
       <mat-icon>settings</mat-icon>
     </button>
-  
-    <button mat-button (click)="download()" [disabled]="downloading">
-      <mat-icon *ngIf="!downloading">download</mat-icon>
-      <mat-spinner *ngIf="downloading" strokeWidth="3" diameter="20"></mat-spinner>
+    
+    <button mat-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
     </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="fractalSettingsService.resetAll()">
+        <mat-icon>replay</mat-icon>
+        <span>Reset Settings</span>
+      </button>
+
+      <button mat-menu-item>
+        <mat-icon>file_copy</mat-icon>
+        <span>Copy Url</span>
+      </button>
+
+      <button mat-menu-item (click)="save()">
+        <mat-icon>save</mat-icon>
+        <span>Save</span>
+      </button>
+
+      <button mat-menu-item (click)="list()">
+        <mat-icon>list</mat-icon>
+        <span>List</span>
+      </button>
+      
+      <button mat-menu-item (click)="download()" [disabled]="downloading">
+        <mat-icon *ngIf="!downloading">download</mat-icon>
+        <mat-spinner *ngIf="downloading" strokeWidth="3" diameter="20"></mat-spinner>
+        <span>{{ downloading ? 'Downloading...' : 'Download' }}</span>
+      </button>
+    </mat-menu>
   </div>
 </mat-card>

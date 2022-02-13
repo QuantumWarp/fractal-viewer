@@ -45,33 +45,33 @@ export class FractalSettingsModalComponent implements OnInit {
   }
 
   patchForm(): void {
-    this.form.get('fractalType').setValue(this.fractalSettingsService.fractalParams.type);
-    this.form.get('zoomFactor').setValue(this.fractalSettingsService.zoomFactor);
-    this.form.get('colorScheme').setValue(this.fractalSettingsService.colorScheme.type);
-    this.form.get('zoom').setValue(this.fractalSettingsService.zoom);
-    this.form.get('centerX').setValue(this.fractalSettingsService.center.x);
-    this.form.get('centerY').setValue(this.fractalSettingsService.center.y);
-    this.form.get('maxIterations').setValue(this.fractalSettingsService.fractalParams.maxIterations);
-    this.form.get('bound').setValue(this.fractalSettingsService.fractalParams.bound);
-    this.form.get('minColorValue').setValue(this.fractalSettingsService.minColorValue);
+    this.form.get('fractalType').setValue(this.fractalSettingsService.settings.params.type);
+    this.form.get('maxIterations').setValue(this.fractalSettingsService.settings.params.maxIterations);
+    this.form.get('bound').setValue(this.fractalSettingsService.settings.params.bound);
+    this.form.get('zoom').setValue(this.fractalSettingsService.settings.zoom);
+    this.form.get('zoomFactor').setValue(this.fractalSettingsService.settings.zoomFactor);
+    this.form.get('centerX').setValue(this.fractalSettingsService.settings.center.x);
+    this.form.get('centerY').setValue(this.fractalSettingsService.settings.center.y);
+    this.form.get('colorScheme').setValue(this.fractalSettingsService.settings.colorScheme.type);
+    this.form.get('minColorValue').setValue(this.fractalSettingsService.settings.minColorValue);
   }
 
   applySettings(): void {
-    this.fractalSettingsService.setSettings(
-      this.form.value.zoomFactor,
-      ColorSchemeFactory.create(this.form.value.colorScheme),
-      this.form.value.minColorValue,
-      this.form.value.zoom,
-      new Coordinate(
-        this.form.value.centerX,
-        this.form.value.centerY,
-      ),
-      {
+    this.fractalSettingsService.setSettings({
+      params: {
         type: this.form.value.fractalType,
         maxIterations: this.form.value.maxIterations,
         bound: this.form.value.bound,
       },
-    );
+      zoom: this.form.value.zoom,
+      zoomFactor: this.form.value.zoomFactor,
+      center: new Coordinate(
+        this.form.value.centerX,
+        this.form.value.centerY,
+      ),
+      colorScheme: ColorSchemeFactory.create(this.form.value.colorScheme),
+      minColorValue: this.form.value.minColorValue,
+    });
     this.dialogRef.close();
   }
 }

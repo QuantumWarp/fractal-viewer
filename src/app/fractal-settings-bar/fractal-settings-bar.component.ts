@@ -7,6 +7,8 @@ import { FractalImageLoader } from '../fractal-canvas/fractal-image-loader';
 import { ResolutionModalComponent } from '../resolution-modal/resolution-modal.component';
 import { FractalSettingsService } from '../services/fractal-settings.service';
 import { FractalSettingsModalComponent } from '../fractal-settings-modal/fractal-settings-modal.component';
+import { FractalListComponent } from '../fractal-list-modal/fractal-list.component';
+import { FractalSaveComponent } from '../fractal-save-modal/fractal-save.component';
 
 @Component({
   selector: 'app-fractal-settings-bar',
@@ -21,7 +23,7 @@ export class FractalSettingsBarComponent {
   downloading = false;
 
   get typeName(): string {
-    const name = this.fractalTypes[this.fractalSettingsService.fractalParams.type];
+    const name = this.fractalTypes[this.fractalSettingsService.settings.params.type];
     return name.replace(/([A-Z])/g, ' $1').trim();
   }
 
@@ -30,8 +32,16 @@ export class FractalSettingsBarComponent {
     private dialog: MatDialog,
   ) { }
 
+  list(): void {
+    this.dialog.open(FractalListComponent);
+  }
+
+  save(): void {
+    this.dialog.open(FractalSaveComponent);
+  }
+
   settings(): void {
-    this.dialog.open(FractalSettingsModalComponent).afterClosed();
+    this.dialog.open(FractalSettingsModalComponent);
   }
 
   download(): void {
@@ -45,12 +55,12 @@ export class FractalSettingsBarComponent {
     this.downloading = true;
 
     const downloader = new FractalImageLoader(
-      this.fractalSettingsService.center,
+      this.fractalSettingsService.settings.center,
       this.fractalSettingsService.increment,
       new Point(width, height),
-      this.fractalSettingsService.fractalParams,
-      this.fractalSettingsService.minColorValue,
-      this.fractalSettingsService.colorScheme,
+      this.fractalSettingsService.settings.params,
+      this.fractalSettingsService.settings.minColorValue,
+      this.fractalSettingsService.settings.colorScheme,
     );
 
     downloader.worker.doneUpdate$.subscribe(() => {
