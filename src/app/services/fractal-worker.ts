@@ -40,6 +40,7 @@ export class FractalWorker {
         } else if (response.data.type === WorkerMessageType.ProcessFractalResults) {
           this.resultsSubject.next(response.data);
         }
+      // eslint-disable-next-line no-console
       }, (error) => console.error('WORKER ERROR::', error));
   }
 

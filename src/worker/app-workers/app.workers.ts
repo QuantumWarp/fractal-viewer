@@ -15,6 +15,7 @@ export class AppWorkers {
         this.startProcessor(message);
         break;
       default:
+        // eslint-disable-next-line no-console
         console.error('Message not recognized');
     }
   }
