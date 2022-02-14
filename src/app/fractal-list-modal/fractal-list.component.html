@@ -1,6 +1,5 @@
 <mat-toolbar>Fractal List</mat-toolbar>
 
-
 <mat-action-list>
   <button
     *ngIf="orderedItems.length === 0"
@@ -16,7 +15,7 @@
   >
     <img
       mat-list-icon
-      [src]="item.params.type | fractalIcon"
+      [src]="item.settings.params.type | fractalIcon"
     />
 
     <span mat-line>
