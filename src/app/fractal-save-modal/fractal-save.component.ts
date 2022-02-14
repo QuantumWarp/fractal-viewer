@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FractalListService } from '../services/fractal-list.service';
+import { FractalSettingsService } from '../services/fractal-settings.service';
 
 @Component({
   templateUrl: './fractal-save.component.html',
@@ -10,6 +11,7 @@ export class FractalSaveComponent {
   form: FormGroup;
 
   constructor(
+    private fractalSettingsService: FractalSettingsService,
     public fractalListService: FractalListService,
     private formBuilder: FormBuilder,
   ) {
@@ -17,6 +19,9 @@ export class FractalSaveComponent {
   }
 
   confirm(): void {
-    this.fractalListService
+    this.fractalListService.save(
+      this.form.value.name,
+      this.fractalSettingsService.settings,
+    );
   }
 }

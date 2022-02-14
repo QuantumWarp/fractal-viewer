@@ -33,7 +33,9 @@ export class FractalSettingsBarComponent {
   ) { }
 
   list(): void {
-    this.dialog.open(FractalListComponent);
+    this.dialog.open(FractalListComponent, {
+      position: { left: '20px' },
+    });
   }
 
   save(): void {

@@ -1,14 +1,12 @@
 :host {
   display: flex;
   flex-direction: column;
+  min-width: 400px;
+  max-height: 60vh;
 }
 
-form {
-  padding: 20px;
-
-  > * {
-    margin: 0px 5px;
-  }
+mat-action-list {
+  overflow-y: auto;
 }
 
 .action-buttons {

@@ -2,15 +2,27 @@
 
 <mat-action-list>
   <button
-    *ngFor="let item of fractalListService.items"
+    *ngFor="let item of orderedItems"
     mat-list-item
-    (click)="save()"
-  >{{ item.name }}</button>
+    (click)="load(item)"
+  >
+    <img
+      mat-list-icon
+      src="assets/fractal-icon.png"
+    />
+
+    <span mat-line>
+      <span>{{ item.name }}</span>
+    </span>
+
+    <button mat-icon-button (click)="deleteItem(item)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </button>
 </mat-action-list>
 
 <mat-toolbar class="action-buttons">
-  <button mat-raised-button mat-dialog-close>Cancel</button>
-  <button (click)="confirm()" mat-raised-button color="primary">
-    Confirm
+  <button mat-dialog-close mat-raised-button color="primary">
+    Done
   </button>
 </mat-toolbar>
