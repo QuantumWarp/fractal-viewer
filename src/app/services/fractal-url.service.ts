@@ -1,36 +1,38 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { ActivatedRoute } from '@angular/router';
+import { Buffer } from 'buffer';
+import { Coordinate } from '../../worker/app-workers/shared/coordinate';
+import { ColorSchemeFactory } from '../color-schemes/color-scheme-factory';
+import { FractalSettingsService } from './fractal-settings.service';
 
 @Injectable()
 export class FractalUrlService {
-  private static settingsUrlKey = 'settings';
-
-  private urlSettings: string;
-
-  newUrlSettings = new EventEmitter<string>();
-
   constructor(
-    private router: Router,
+    private clipboard: Clipboard,
     private activatedRoute: ActivatedRoute,
+    private fractalSettingsService: FractalSettingsService,
   ) {
-    this.activatedRoute.queryParams.subscribe((params: Params) => {
-      if (!params[FractalUrlService.settingsUrlKey]) { return; }
-      if (this.urlSettings === params[FractalUrlService.settingsUrlKey]) { return; }
+    this.activatedRoute.fragment.subscribe((encoded: string) => {
+      if (!encoded) return;
 
-      this.urlSettings = atob(params[FractalUrlService.settingsUrlKey]);
-      this.newUrlSettings.emit(this.urlSettings);
+      const settingsString = Buffer.from(encoded, 'base64').toString('ascii');
+      const settings = JSON.parse(settingsString, this.jsonReviver);
+      fractalSettingsService.setSettings(settings);
+      window.history.pushState('', document.title, window.location.pathname + window.location.search);
     });
   }
 
-  updateUrl(settingsString: string): void {
-    const queryParams: Params = {};
-    this.urlSettings = settingsString;
-    queryParams[FractalUrlService.settingsUrlKey] = btoa(settingsString);
+  copyToClipboard(): void {
+    const stringSettings = JSON.stringify(this.fractalSettingsService.settings);
+    const encoded = Buffer.from(stringSettings).toString('base64');
+    const url = `${window.location.protocol}//${window.location.host}#${encoded}`;
+    this.clipboard.copy(url);
+  }
 
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams,
-      queryParamsHandling: 'merge',
-    });
+  private jsonReviver(key: string, value: any): any {
+    if (key === 'center') { return new Coordinate(value.x, value.y); }
+    if (key === 'colorScheme') { return ColorSchemeFactory.create(value.type); }
+    return value;
   }
 }

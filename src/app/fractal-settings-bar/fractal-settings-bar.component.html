@@ -36,9 +36,9 @@
         <span>Reset Settings</span>
       </button>
 
-      <button mat-menu-item>
+      <button mat-menu-item (click)="fractalUrlService.copyToClipboard()">
         <mat-icon>file_copy</mat-icon>
-        <span>Copy Url</span>
+        <span>Copy as Url</span>
       </button>
 
       <button mat-menu-item (click)="save()">

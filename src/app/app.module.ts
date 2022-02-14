@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 import { AboutComponent } from './about/about.component';
 import { AppComponent } from './app.component';
@@ -52,6 +53,7 @@ import { FractalIconPipe } from './services/fractal.pipe';
     FractalSettingsModalComponent,
   ],
   imports: [
+    ClipboardModule,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,

@@ -9,6 +9,7 @@ import { FractalSettingsService } from '../services/fractal-settings.service';
 import { FractalSettingsModalComponent } from '../fractal-settings-modal/fractal-settings-modal.component';
 import { FractalListComponent } from '../fractal-list-modal/fractal-list.component';
 import { FractalSaveComponent } from '../fractal-save-modal/fractal-save.component';
+import { FractalUrlService } from '../services/fractal-url.service';
 
 @Component({
   selector: 'app-fractal-settings-bar',
@@ -24,6 +25,7 @@ export class FractalSettingsBarComponent {
 
   constructor(
     public fractalSettingsService: FractalSettingsService,
+    public fractalUrlService: FractalUrlService,
     private dialog: MatDialog,
   ) { }
 
