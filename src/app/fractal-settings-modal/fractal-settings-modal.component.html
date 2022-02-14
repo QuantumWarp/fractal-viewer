@@ -3,13 +3,13 @@
 <form [formGroup]="form">
   <mat-form-field>
     <mat-select placeholder="Fractal Type" formControlName="fractalType">
-      <mat-option *ngFor="let fractalType of fractalTypes | keys" [value]="fractalType.key">{{ fractalType.value }}</mat-option>
+      <mat-option *ngFor="let fractalType of fractalTypes" [value]="fractalType">{{ fractalType }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field>
     <mat-select placeholder="Color Scheme" formControlName="colorScheme">
-      <mat-option *ngFor="let colorScheme of colorSchemes | keys" [value]="colorScheme.key">{{ colorScheme.value }}</mat-option>
+      <mat-option *ngFor="let colorScheme of colorSchemes" [value]="colorScheme">{{ colorScheme }}</mat-option>
     </mat-select>
   </mat-form-field>
 

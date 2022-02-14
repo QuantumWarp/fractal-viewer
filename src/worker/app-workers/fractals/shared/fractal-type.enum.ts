@@ -1,4 +1,4 @@
 export enum FractalType {
-  MandelbrotSet,
-  BurningShip,
+  MandelbrotSet = 'Mandelbrot Set',
+  BurningShip = 'Burning Ship Fractal',
 }

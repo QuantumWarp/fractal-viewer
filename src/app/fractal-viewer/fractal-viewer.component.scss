@@ -6,17 +6,6 @@ mat-toolbar {
   top: 0;
   position: sticky;
 
-  > .logo-container {
-    display: flex;
-    align-items: center;
-    margin-left: 5px;
-
-    > .fractal-logo {
-      width: 45px;
-      height: 45px;
-    }
-  }
-
   > .help-button {
     display: flex;
     justify-content: stretch;

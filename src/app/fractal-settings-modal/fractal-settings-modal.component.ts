@@ -13,9 +13,9 @@ import { FractalSettingsService } from '../services/fractal-settings.service';
   styleUrls: ['./fractal-settings-modal.component.scss'],
 })
 export class FractalSettingsModalComponent implements OnInit {
-  fractalTypes = FractalType;
+  fractalTypes = Object.values(FractalType);
 
-  colorSchemes = ColorSchemeType;
+  colorSchemes = Object.values(ColorSchemeType);
 
   downloading = false;
 

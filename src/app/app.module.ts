@@ -23,13 +23,13 @@ import { FractalCanvasComponent } from './fractal-canvas/fractal-canvas.componen
 import { FractalSettingsModalComponent } from './fractal-settings-modal/fractal-settings-modal.component';
 import { FractalViewerComponent } from './fractal-viewer/fractal-viewer.component';
 import { FractalSettingsService } from './services/fractal-settings.service';
-import { KeysPipe } from './services/keys.pipe';
 import { ResolutionModalComponent } from './resolution-modal/resolution-modal.component';
 import { FractalUrlService } from './services/fractal-url.service';
 import { FractalSettingsBarComponent } from './fractal-settings-bar/fractal-settings-bar.component';
 import { FractalListComponent } from './fractal-list-modal/fractal-list.component';
 import { FractalSaveComponent } from './fractal-save-modal/fractal-save.component';
 import { FractalListService } from './services/fractal-list.service';
+import { FractalIconPipe } from './services/fractal.pipe';
 
 @NgModule({
   declarations: [
@@ -42,7 +42,7 @@ import { FractalListService } from './services/fractal-list.service';
     FractalSettingsModalComponent,
     FractalSettingsBarComponent,
     ResolutionModalComponent,
-    KeysPipe,
+    FractalIconPipe,
   ],
   entryComponents: [
     AboutComponent,

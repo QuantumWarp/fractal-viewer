@@ -1,6 +1,11 @@
 <mat-card>
   <div class="info">
-    <div class="type"><b>{{ typeName }}</b></div>
+    <img
+      class="icon"
+      [src]="fractalSettingsService.settings.params.type | fractalIcon"
+    />
+
+    <div class="type"><b>{{ fractalSettingsService.settings.params.type }}</b></div>
 
     <div><b>Center:</b></div>
     <div class="value">
