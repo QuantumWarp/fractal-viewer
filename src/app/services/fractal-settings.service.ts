@@ -51,12 +51,13 @@ export class FractalSettingsService {
   }
 
   resetAll(): void {
-    this.settings.zoomFactor = 2;
-    this.settings.colorScheme = ColorSchemeFactory.create(ColorSchemeType.Greenscale);
-    this.settings.zoom = 1;
-    this.settings.center = new Coordinate(0, 0);
     this.settings.params.maxIterations = 250;
     this.settings.params.bound = 2;
+    this.settings.zoom = 1;
+    this.settings.zoomFactor = 2;
+    this.settings.center = new Coordinate(0, 0);
+    this.settings.colorScheme = ColorSchemeFactory.create(ColorSchemeType.Greenscale);
+    this.settings.minColorValue = 0;
     this.updateStorage();
   }
 

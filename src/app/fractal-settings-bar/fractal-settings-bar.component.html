@@ -14,7 +14,12 @@
     </div>
 
     <div><b>Zoom:</b></div>
-    <div class="value">{{ fractalSettingsService.settings.zoom }}</div>
+    <div class="value">
+      <div>{{ fractalSettingsService.settings.zoom }}</div>
+      <div *ngIf="fractalSettingsService.settings.zoom >= 10000000000000">Approaching max precision</div>
+    </div>
+
+    <div *ngIf="fractalSettingsService.settings.zoom === 1"><b>Click to Zoom</b></div>
   </div>
 
   <div>
