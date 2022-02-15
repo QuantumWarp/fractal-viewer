@@ -27,9 +27,12 @@ export class FractalSettingsService {
 
   constructor() {
     const previousState = localStorage.getItem('fractalState');
+    if (!previousState) return;
 
-    if (previousState) {
-      Object.assign(this.settings, JSON.parse(previousState, this.jsonReviver));
+    try {
+      this.settings = JSON.parse(previousState, this.jsonReviver);
+    } catch {
+      this.updateStorage();
     }
   }
 
