@@ -1,8 +1,0 @@
-.angular
-.git
-.dockerignore
-.gitignore
-.vscode
-docker-compose.yml
-Dockerfile
-node_modules
